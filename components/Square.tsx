@@ -1,9 +1,13 @@
 import React from "react";
 import styles from "./square.module.css";
 import Ghost from "./Ghost";
+import Cood from "./Cood";
 
 interface SquarePropsInterface {
   ghost: Ghost;
+  cood: Cood;
+  onClick: (c: Cood) => void;
+  isFirstClicked: boolean;
 }
 
 const whiteGhost = (
@@ -33,7 +37,12 @@ const hiddenGhost = (
 export default function Square(props: SquarePropsInterface) {
   const ghost = props.ghost;
   return (
-    <button className={styles.square}>
+    <button
+      className={
+        styles.square + " " + (props.isFirstClicked ? styles.firstClicked : "")
+      }
+      onClick={() => props.onClick(props.cood)}
+    >
       {ghost &&
         (ghost.ofPlayer
           ? ghost.isWhite

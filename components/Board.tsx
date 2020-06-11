@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./board.module.css";
 import Square from "./Square";
 import Ghost from "./Ghost";
+import Cood from "./Cood";
 
 interface BoardPropsInterface {}
 interface BoardStateInterface {
@@ -9,6 +10,8 @@ interface BoardStateInterface {
     player: { white: Array<Cood>; black: Array<Cood> };
     opposite: { white: Array<Cood>; black: Array<Cood> };
   };
+  firstClickedSquare: Cood;
+  secondClickedSquare: Cood;
 }
 
 class Board extends React.Component<BoardPropsInterface, BoardStateInterface> {
@@ -45,11 +48,33 @@ class Board extends React.Component<BoardPropsInterface, BoardStateInterface> {
           ],
         },
       },
+      firstClickedSquare: null,
+      secondClickedSquare: null,
     };
   }
 
-  renderSquare(i: number, ghost: Ghost) {
-    return <Square key={i} ghost={ghost} />;
+  handleFirstClick(c: Cood) {
+    this.setState({
+      firstClickedSquare: c,
+    });
+    console.log(this.state.firstClickedSquare);
+  }
+
+  renderSquare(
+    i: number,
+    ghost: Ghost,
+    cood: Cood,
+    onClick: (c: Cood) => void
+  ) {
+    return (
+      <Square
+        key={i}
+        ghost={ghost}
+        cood={cood}
+        onClick={onClick}
+        isFirstClicked={cood.equals(this.state.firstClickedSquare)}
+      />
+    );
   }
   renderBoardRow(i: number) {
     const rows = [];
@@ -60,16 +85,19 @@ class Board extends React.Component<BoardPropsInterface, BoardStateInterface> {
 
       for (const [player, v] of Object.entries(this.state.ghosts)) {
         for (const [color, coods] of Object.entries(v)) {
-          for (const [id, cood] of coods.entries()) {
-            if (cood.equals(squareCood)) {
+          for (const [id, Cood] of coods.entries()) {
+            if (Cood.equals(squareCood)) {
               ghost = new Ghost(id, player === "player", color === "white");
               break;
             }
           }
         }
       }
-
-      rows.push(this.renderSquare(8 * i + j, ghost));
+      rows.push(
+        this.renderSquare(6 * i + j, ghost, squareCood, (cood: Cood) =>
+          this.handleFirstClick(cood)
+        )
+      );
     }
     return (
       <div className="board-row" key={i}>
@@ -88,18 +116,6 @@ class Board extends React.Component<BoardPropsInterface, BoardStateInterface> {
         <div>{board}</div>
       </div>
     );
-  }
-}
-
-class Cood {
-  x: number;
-  y: number;
-  constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
-  }
-  equals(c: Cood) {
-    return this.x === c.x && this.y === c.y;
   }
 }
 
