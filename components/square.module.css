@@ -16,3 +16,8 @@
 .square:focus {
   outline: none;
 }
+
+.ghost {
+  max-width: 100%;
+  height: auto;
+}
