@@ -5,8 +5,7 @@ import Cood from "./Cood";
 
 interface SquarePropsInterface {
   ghost: Ghost;
-  cood: Cood;
-  onClick: (c: Cood) => void;
+  onClick: () => void;
   isFirstClicked: boolean;
 }
 
@@ -41,7 +40,7 @@ export default function Square(props: SquarePropsInterface) {
       className={
         styles.square + " " + (props.isFirstClicked ? styles.firstClicked : "")
       }
-      onClick={() => props.onClick(props.cood)}
+      onClick={props.onClick}
     >
       {ghost &&
         (ghost.ofPlayer
