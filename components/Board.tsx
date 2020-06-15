@@ -1,14 +1,15 @@
 import React from "react";
 import styles from "./board.module.css";
-import Square from "./Square";
-import Ghost from "./Ghost";
-import Cood from "./Cood";
+import Square from "./square";
+import Ghost from "./ghost";
+import Cood from "./cood";
 
-interface BoardPropsInterface {}
+interface BoardPropsInterface {
+  inPreparation: boolean;
+}
 interface BoardStateInterface {
   squares: Array<Array<{ ghost: Ghost }>>;
   firstClickedSquare: Cood;
-  secondClickedSquare: Cood;
 }
 
 class Board extends React.Component<BoardPropsInterface, BoardStateInterface> {
@@ -41,7 +42,6 @@ class Board extends React.Component<BoardPropsInterface, BoardStateInterface> {
       ],
 
       firstClickedSquare: null,
-      secondClickedSquare: null,
     };
   }
 
@@ -69,13 +69,36 @@ class Board extends React.Component<BoardPropsInterface, BoardStateInterface> {
 
     for (let j = 0; j < 6; j++) {
       const squareCood = new Cood(i, j);
-      const onClick =
-        this.state.squares[i][j].ghost &&
-        this.state.squares[i][j].ghost.ofPlayer
-          ? !this.state.firstClickedSquare
-            ? () => this.handleFirstClick(squareCood)
-            : () => this.handleSecondClick(squareCood)
-          : () => {};
+      let onClick = () => {};
+      // handle first click
+      if (!this.state.firstClickedSquare) {
+        // only player's ghosts are clickable
+        if (
+          this.state.squares[i][j].ghost &&
+          this.state.squares[i][j].ghost.ofPlayer
+        )
+          onClick = () => this.handleFirstClick(squareCood);
+
+        // handle second click
+      } else {
+        // in preparation
+        if (this.props.inPreparation) {
+          // only player's ghosts are clickable
+          if (
+            this.state.squares[i][j].ghost &&
+            this.state.squares[i][j].ghost.ofPlayer
+          ) {
+            onClick = () => this.handleSecondClick(squareCood);
+          }
+
+          // during buttle
+        } else {
+          // only squares adjacent to firstClickedSquare are clickable
+          if (this.state.firstClickedSquare.isAdjacent(squareCood)) {
+            onClick = () => this.handleSecondClick(squareCood);
+          }
+        }
+      }
 
       rows.push(
         <Square

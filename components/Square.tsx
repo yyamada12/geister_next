@@ -1,7 +1,6 @@
 import React from "react";
 import styles from "./square.module.css";
-import Ghost from "./Ghost";
-import Cood from "./Cood";
+import Ghost from "./ghost";
 
 interface SquarePropsInterface {
   ghost: Ghost;
