@@ -1,26 +1,41 @@
 import React from "react";
 import Board from "../components/board";
+import io from "socket.io-client";
 
 interface GamePropsInterface {}
 interface GameStateInterface {
-  inPreparation: boolean;
+  isPlayerInPreparation: boolean;
+  isOppositeInPreparation: boolean;
 }
+
+let socket;
 
 class Game extends React.Component<GamePropsInterface, GameStateInterface> {
   constructor(props: GamePropsInterface) {
     super(props);
+    socket = io("localhost:8080");
+    socket.on("oppositePrepareDone", () => {
+      this.setState({
+        isOppositeInPreparation: false,
+      });
+    });
     this.state = {
-      inPreparation: true,
+      isPlayerInPreparation: true,
+      isOppositeInPreparation: true,
     };
   }
+
+  handlePrepareDone = () => {
+    this.setState({ isPlayerInPreparation: false });
+    socket.emit("playerPrepareDone");
+  };
+
   render() {
     return (
       <div>
-        <Board inPreparation={this.state.inPreparation} />
+        <Board isPlayerInPreparation={this.state.isPlayerInPreparation} />
         <br />
-        <PreparedButton
-          onClick={() => this.setState({ inPreparation: false })}
-        ></PreparedButton>
+        <PreparedButton onClick={this.handlePrepareDone}></PreparedButton>
       </div>
     );
   }

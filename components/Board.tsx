@@ -5,7 +5,7 @@ import Ghost from "./ghost";
 import Cood from "./cood";
 
 interface BoardPropsInterface {
-  inPreparation: boolean;
+  isPlayerInPreparation: boolean;
 }
 interface BoardStateInterface {
   squares: Array<Array<{ ghost: Ghost }>>;
@@ -82,7 +82,7 @@ class Board extends React.Component<BoardPropsInterface, BoardStateInterface> {
         // handle second click
       } else {
         // in preparation
-        if (this.props.inPreparation) {
+        if (this.props.isPlayerInPreparation) {
           // only player's ghosts are clickable
           if (
             this.state.squares[i][j].ghost &&
