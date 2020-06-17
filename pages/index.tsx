@@ -1,7 +1,10 @@
+import React, { useState } from "react";
+
 import Head from "next/head";
 import Link from "next/link";
 
 export default function Home() {
+  const [name, setName] = useState("");
   return (
     <div className="container">
       <Head>
@@ -11,9 +14,17 @@ export default function Home() {
 
       <main>
         <h1 className="title">Geister</h1>
-
-        <Link href="/game">
-          <a>game</a>
+        <div>
+          name:
+          <input
+            type="text"
+            name="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          ></input>
+        </div>
+        <Link href="/lobby">
+          <a>start</a>
         </Link>
       </main>
 
