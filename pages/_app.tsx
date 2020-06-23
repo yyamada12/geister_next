@@ -1,7 +1,7 @@
 import App from "next/app";
 import PlayerContext from "../components/player";
 
-class MyApp extends App<> {
+class MyApp extends App {
   constructor(props) {
     super(props);
     this.state = {
