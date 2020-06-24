@@ -1,6 +1,7 @@
 import React from "react";
 import Board from "../components/board";
 import io from "socket.io-client";
+import Link from "next/link";
 
 interface GamePropsInterface {}
 interface GameStateInterface {
@@ -36,6 +37,10 @@ class Game extends React.Component<GamePropsInterface, GameStateInterface> {
         <Board isPlayerInPreparation={this.state.isPlayerInPreparation} />
         <br />
         <PreparedButton onClick={this.handlePrepareDone}></PreparedButton>
+
+        <Link href="/lobby">
+          <button>lobby</button>
+        </Link>
       </div>
     );
   }
