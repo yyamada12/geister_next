@@ -16,14 +16,14 @@ const io = socketio.listen(server);
 
 let waitingPlayerId: string;
 let players: {
-  [id: string]: { name: string; socketid: string; opposite?: string };
+  [id: string]: { name: string; socketid: string; opponent?: string };
 } = {};
 
 io.on("connection", (socket) => {
   console.log("Acces to User:", socket.id);
 
   socket.on("playerPrepareDone", () => {
-    socket.broadcast.emit("oppositePrepareDone");
+    socket.broadcast.emit("opponentPrepareDone");
   });
 
   socket.on("enter", (userName) => {
@@ -32,11 +32,11 @@ io.on("connection", (socket) => {
     players[id] = { name: userName, socketid: socket.id };
 
     if (waitingPlayerId && waitingPlayerId !== id) {
-      players[id].opposite = waitingPlayerId;
+      players[id].opponent = waitingPlayerId;
 
       let waitingPlayer = players[waitingPlayerId];
-      socket.to(waitingPlayer.socketid).emit("opposite", userName);
-      socket.emit("opposite", waitingPlayer.name);
+      socket.to(waitingPlayer.socketid).emit("opponent", userName);
+      socket.emit("opponent", waitingPlayer.name);
 
       waitingPlayerId = undefined;
       console.log("matched!", userName, waitingPlayer.name);

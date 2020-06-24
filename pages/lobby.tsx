@@ -4,7 +4,7 @@ import PlayerContext from "../components/player";
 
 export default function Lobby() {
   const { player } = useContext(PlayerContext);
-  let [opposite, setOpposite] = useState("");
+  let [opponent, setOpponent] = useState("");
   let [id, setId] = useState("");
 
   let socket = io("localhost:8080");
@@ -12,9 +12,9 @@ export default function Lobby() {
     console.log(id);
     setId(id);
   });
-  socket.on("opposite", (name) => {
+  socket.on("opponent", (name) => {
     console.log(name);
-    setOpposite(name);
+    setOpponent(name);
   });
   const enter = () => {
     socket.emit("enter", player);
@@ -22,7 +22,7 @@ export default function Lobby() {
   return (
     <div>
       <p>Welcome {player}</p>
-      <p> {opposite ? "Opposite is " + opposite : "Waiting opposite..."}</p>
+      <p> {opponent ? "Opponent is " + opponent : "Waiting opponent..."}</p>
       <button onClick={enter}>enter</button>
     </div>
   );

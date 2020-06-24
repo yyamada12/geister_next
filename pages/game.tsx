@@ -6,7 +6,7 @@ import Link from "next/link";
 interface GamePropsInterface {}
 interface GameStateInterface {
   isPlayerInPreparation: boolean;
-  isOppositeInPreparation: boolean;
+  isOpponentInPreparation: boolean;
 }
 
 let socket;
@@ -15,14 +15,14 @@ class Game extends React.Component<GamePropsInterface, GameStateInterface> {
   constructor(props: GamePropsInterface) {
     super(props);
     socket = io("localhost:8080");
-    socket.on("oppositePrepareDone", () => {
+    socket.on("opponentPrepareDone", () => {
       this.setState({
-        isOppositeInPreparation: false,
+        isOpponentInPreparation: false,
       });
     });
     this.state = {
       isPlayerInPreparation: true,
-      isOppositeInPreparation: true,
+      isOpponentInPreparation: true,
     };
   }
 
