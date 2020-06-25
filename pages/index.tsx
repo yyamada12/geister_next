@@ -3,12 +3,11 @@ import React, { useState, useContext } from "react";
 import Head from "next/head";
 import Link from "next/link";
 
-import PlayerContext from "../components/player";
+import { useSetPlayer } from "../components/playerContext";
 
 export default function Home() {
   const [name, setName] = useState("");
-
-  const { player, setPlayer } = useContext(PlayerContext);
+  const { setPlayerName } = useSetPlayer();
 
   return (
     <div className="container">
@@ -29,7 +28,7 @@ export default function Home() {
           ></input>
         </div>
         <Link href="/lobby">
-          <button onClick={() => setPlayer(name)}>start</button>
+          <button onClick={() => setPlayerName(name)}>start</button>
         </Link>
       </main>
 

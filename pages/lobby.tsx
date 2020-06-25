@@ -1,11 +1,10 @@
-import React, { useContext, useState } from "react";
+import React from "react";
 import io from "socket.io-client";
-import PlayerContext from "../components/player";
+import { usePlayer, useSetPlayer } from "../components/playerContext";
 
 export default function Lobby() {
-  const { player } = useContext(PlayerContext);
-  let [opponent, setOpponent] = useState("");
-  let [id, setId] = useState("");
+  const { playerName, opponentName } = usePlayer();
+  const { setId, setOpponentName } = useSetPlayer();
 
   let socket = io("localhost:8080");
   socket.on("uuid", (id) => {
@@ -14,15 +13,17 @@ export default function Lobby() {
   });
   socket.on("opponent", (name) => {
     console.log(name);
-    setOpponent(name);
+    setOpponentName(name);
   });
   const enter = () => {
-    socket.emit("enter", player);
+    socket.emit("enter", playerName);
   };
   return (
     <div>
-      <p>Welcome {player}</p>
-      <p> {opponent ? "Opponent is " + opponent : "Waiting opponent..."}</p>
+      <p>Welcome {playerName}</p>
+      <p>
+        {opponentName ? "Opponent is " + opponentName : "Waiting opponent..."}
+      </p>
       <button onClick={enter}>enter</button>
     </div>
   );
