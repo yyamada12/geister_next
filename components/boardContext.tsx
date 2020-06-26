@@ -21,7 +21,7 @@ export const PlayerProvider = ({ children }) => {
 
   useEffect(() => {
     if (isInitialized) {
-      sessionStorage.setItem(
+      localStorage.setItem(
         "player",
         JSON.stringify({ id, playerName, opponentName })
       );
@@ -30,7 +30,7 @@ export const PlayerProvider = ({ children }) => {
 
   useEffect(() => {
     const initialState =
-      JSON.parse(sessionStorage.getItem("player")) || defaultState;
+      JSON.parse(localStorage.getItem("player")) || defaultState;
     setId(initialState.id);
     setPlayerName(initialState.playerName);
     setOpponentName(initialState.opponentName);

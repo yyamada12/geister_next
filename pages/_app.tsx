@@ -1,12 +1,15 @@
 import App from "next/app";
 import { PlayerProvider } from "../components/playerContext";
+import { SocketProvider } from "../components/socketContext";
 
 class MyApp extends App {
   render() {
     const { Component, pageProps } = this.props;
     return (
       <PlayerProvider>
-        <Component {...pageProps} />
+        <SocketProvider>
+          <Component {...pageProps} />
+        </SocketProvider>
       </PlayerProvider>
     );
   }
