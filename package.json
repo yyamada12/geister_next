@@ -9,6 +9,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "async-lock": "^1.2.4",
     "express": "^4.17.1",
     "next": "9.4.4",
     "react": "16.13.1",

@@ -1,8 +1,10 @@
-import { useState, useEffect, useContext, createContext } from "react";
+import { useEffect, useContext, createContext } from "react";
 import io from "socket.io-client";
 import { useSetPlayer } from "./playerContext";
 
-const SocketActionContext = createContext((playerName: string) => {});
+const SocketActionContext = createContext(
+  (playerName: string, id: string) => {}
+);
 
 let socket: SocketIOClient.Socket;
 
@@ -21,8 +23,8 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
     });
   }, []);
 
-  const enter = (playerName) => {
-    socket.emit("enter", playerName);
+  const enter = (playerName: string, id: string) => {
+    socket.emit("enter", playerName, id);
   };
 
   return (

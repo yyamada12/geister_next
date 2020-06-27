@@ -28,7 +28,14 @@ export default function Home() {
           ></input>
         </div>
         <Link href="/lobby">
-          <button onClick={() => setPlayerName(name)}>start</button>
+          <button
+            disabled={!name}
+            onClick={() => {
+              setPlayerName(name);
+            }}
+          >
+            start
+          </button>
         </Link>
       </main>
 
