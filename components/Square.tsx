@@ -4,8 +4,8 @@ import Ghost from "./ghost";
 
 interface SquarePropsInterface {
   ghost: Ghost;
-  onClick: () => void;
-  isFirstClicked: boolean;
+  onClick?: () => void;
+  isFirstClicked?: boolean;
 }
 
 const whiteGhost = (

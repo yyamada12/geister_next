@@ -1,4 +1,21 @@
-.board {
+.mainBoard {
   display: flex;
   flex-direction: row;
+}
+
+.boardContainer {
+  display: flex;
+}
+
+.opponentSideBoard {
+  margin: 0 10px;
+  display: flex;
+  flex-direction: row;
+}
+
+.playerSideBoard {
+  margin: 0 10px;
+  display: flex;
+  flex-direction: row;
+  margin-top: 132px;
 }

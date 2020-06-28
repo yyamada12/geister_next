@@ -8,7 +8,9 @@ interface BoardPropsInterface {
   isPlayerInPreparation: boolean;
 }
 interface BoardStateInterface {
-  squares: Array<Array<{ ghost: Ghost }>>;
+  mainBoard: Array<Array<{ ghost: Ghost }>>;
+  playerSideBoard: Array<Array<{ ghost: Ghost }>>;
+  opponentSideBoard: Array<Array<{ ghost: Ghost }>>;
   firstClickedSquare: Cood;
 }
 
@@ -16,7 +18,7 @@ class Board extends React.Component<BoardPropsInterface, BoardStateInterface> {
   constructor(props: BoardPropsInterface) {
     super(props);
     const NOMAL = () => {
-      return { ghost: null };
+      return { ghost: undefined };
     };
     const OP_BL = () => {
       return { ghost: new Ghost(0, false, false) };
@@ -32,7 +34,7 @@ class Board extends React.Component<BoardPropsInterface, BoardStateInterface> {
     };
 
     this.state = {
-      squares: [
+      mainBoard: [
         [NOMAL(), OP_BL(), OP_BL(), OP_BL(), OP_BL(), NOMAL()],
         [NOMAL(), OP_WH(), OP_WH(), OP_WH(), OP_WH(), NOMAL()],
         [NOMAL(), NOMAL(), NOMAL(), NOMAL(), NOMAL(), NOMAL()],
@@ -40,8 +42,16 @@ class Board extends React.Component<BoardPropsInterface, BoardStateInterface> {
         [NOMAL(), PL_WH(), PL_WH(), PL_WH(), PL_WH(), NOMAL()],
         [NOMAL(), PL_BL(), PL_BL(), PL_BL(), PL_BL(), NOMAL()],
       ],
+      playerSideBoard: [
+        [NOMAL(), NOMAL(), NOMAL(), NOMAL()],
+        [NOMAL(), NOMAL(), NOMAL(), NOMAL()],
+      ],
+      opponentSideBoard: [
+        [NOMAL(), NOMAL(), NOMAL(), NOMAL()],
+        [NOMAL(), NOMAL(), NOMAL(), NOMAL()],
+      ],
 
-      firstClickedSquare: null,
+      firstClickedSquare: undefined,
     };
   }
 
@@ -53,18 +63,18 @@ class Board extends React.Component<BoardPropsInterface, BoardStateInterface> {
 
   handleSecondClick(c: Cood) {
     const fc = this.state.firstClickedSquare;
-    let squares = this.state.squares;
+    let squares = this.state.mainBoard;
     [squares[c.x][c.y], squares[fc.x][fc.y]] = [
       squares[fc.x][fc.y],
       squares[c.x][c.y],
     ];
     this.setState({
-      firstClickedSquare: null,
-      squares: squares,
+      firstClickedSquare: undefined,
+      mainBoard: squares,
     });
   }
 
-  renderBoardRow(i: number) {
+  renderMainBoardRow(i: number) {
     const rows = [];
 
     for (let j = 0; j < 6; j++) {
@@ -74,8 +84,8 @@ class Board extends React.Component<BoardPropsInterface, BoardStateInterface> {
       if (!this.state.firstClickedSquare) {
         // only player's ghosts are clickable
         if (
-          this.state.squares[i][j].ghost &&
-          this.state.squares[i][j].ghost.ofPlayer
+          this.state.mainBoard[i][j].ghost &&
+          this.state.mainBoard[i][j].ghost.ofPlayer
         )
           onClick = () => this.handleFirstClick(squareCood);
 
@@ -85,8 +95,8 @@ class Board extends React.Component<BoardPropsInterface, BoardStateInterface> {
         if (this.props.isPlayerInPreparation) {
           // only player's ghosts are clickable
           if (
-            this.state.squares[i][j].ghost &&
-            this.state.squares[i][j].ghost.ofPlayer
+            this.state.mainBoard[i][j].ghost &&
+            this.state.mainBoard[i][j].ghost.ofPlayer
           ) {
             onClick = () => this.handleSecondClick(squareCood);
           }
@@ -103,7 +113,7 @@ class Board extends React.Component<BoardPropsInterface, BoardStateInterface> {
       rows.push(
         <Square
           key={6 * i + j}
-          ghost={this.state.squares[i][j].ghost}
+          ghost={this.state.mainBoard[i][j].ghost}
           onClick={onClick}
           isFirstClicked={squareCood.equals(this.state.firstClickedSquare)}
         />
@@ -116,14 +126,49 @@ class Board extends React.Component<BoardPropsInterface, BoardStateInterface> {
     );
   }
 
-  render() {
+  renderMainBoard() {
     const board = [];
     for (let i = 0; i < 6; i++) {
-      board.push(this.renderBoardRow(i));
+      board.push(this.renderMainBoardRow(i));
+    }
+    return board;
+  }
+
+  renderSideBoardRow(i: number, isPlayer: boolean) {
+    const rows = [];
+
+    for (let j = 0; j < 4; j++) {
+      const ghost = isPlayer
+        ? this.state.playerSideBoard[i][j].ghost
+        : this.state.opponentSideBoard[i][j].ghost;
+      rows.push(<Square key={4 * i + j} ghost={ghost} />);
     }
     return (
-      <div className={styles.board}>
-        <div>{board}</div>
+      <div className="board-row" key={i}>
+        {rows}
+      </div>
+    );
+  }
+  renderSideBoard(isPlayer: boolean) {
+    const board = [];
+    for (let i = 0; i < 2; i++) {
+      board.push(this.renderSideBoardRow(i, isPlayer));
+    }
+    return board;
+  }
+
+  render() {
+    return (
+      <div className={styles.boardContainer}>
+        <div className={styles.opponentSideBoard}>
+          <div>{this.renderSideBoard(false)}</div>
+        </div>
+        <div className={styles.mainBoard}>
+          <div>{this.renderMainBoard()}</div>
+        </div>
+        <div className={styles.playerSideBoard}>
+          <div>{this.renderSideBoard(true)}</div>
+        </div>
       </div>
     );
   }
