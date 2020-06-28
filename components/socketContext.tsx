@@ -1,15 +1,15 @@
 import { useEffect, useContext, createContext } from "react";
 import io from "socket.io-client";
-import { useSetPlayer } from "./playerContext";
+import { usePlayer, useSetPlayer } from "./playerContext";
+import Cood from "./cood";
 
-const SocketActionContext = createContext(
-  (playerName: string, id: string) => {}
-);
+const SocketActionContext = createContext(undefined);
 
 let socket: SocketIOClient.Socket;
 
 export const SocketProvider: React.FC = ({ children }): JSX.Element => {
   const { setId, setOpponentName } = useSetPlayer();
+  const { id, playerName } = usePlayer();
 
   useEffect(() => {
     socket = io("localhost:8080");
@@ -23,12 +23,16 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
     });
   }, []);
 
-  const enter = (playerName: string, id: string) => {
+  const enter = () => {
     socket.emit("enter", playerName, id);
   };
 
+  const move = (from: Cood, to: Cood) => {
+    socket.emit("move", from, to, id);
+  };
+
   return (
-    <SocketActionContext.Provider value={enter}>
+    <SocketActionContext.Provider value={{ enter, move }}>
       {children}
     </SocketActionContext.Provider>
   );

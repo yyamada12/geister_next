@@ -5,9 +5,9 @@ import { usePlayer } from "../components/playerContext";
 import { useSocketAction } from "../components/socketContext";
 
 export default function Lobby() {
-  const { id, playerName, opponentName } = usePlayer();
-  const enter = useSocketAction();
-  useEffect(() => enter(playerName, id), []);
+  const { opponentName } = usePlayer();
+  const { enter } = useSocketAction();
+  useEffect(() => enter(), []);
   return (
     <div>
       <p>

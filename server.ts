@@ -53,6 +53,10 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("move", (from, to, id) => {
+    socket.to(players[id].opponent).emit(from, to);
+  });
+
   socket.on("disconnect", (_) => {
     console.log("Disconnect: ", socket.id);
     if (waitingPlayerId && players[waitingPlayerId].socketid === socket.id) {

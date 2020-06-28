@@ -4,6 +4,8 @@ import Square from "./square";
 import Ghost from "./ghost";
 import Cood from "./cood";
 
+import { useSocketAction } from "../components/socketContext";
+
 interface BoardPropsInterface {
   isPlayerInPreparation: boolean;
 }
@@ -64,6 +66,7 @@ class Board extends React.Component<BoardPropsInterface, BoardStateInterface> {
   handleSecondClick(c: Cood) {
     const fc = this.state.firstClickedSquare;
     let squares = this.state.mainBoard;
+
     [squares[c.x][c.y], squares[fc.x][fc.y]] = [
       squares[fc.x][fc.y],
       squares[c.x][c.y],
