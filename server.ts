@@ -55,7 +55,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", (_) => {
     console.log("Disconnect: ", socket.id);
-    if (waitingPlayerId && waitingPlayerId === socket.id) {
+    if (waitingPlayerId && players[waitingPlayerId].socketid === socket.id) {
       waitingPlayerId = undefined;
     }
   });
