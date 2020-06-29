@@ -1,4 +1,4 @@
-import { dirxml } from "console";
+import { BOARD_SIZE } from "../consts";
 
 export default class Cood {
   x: number;
