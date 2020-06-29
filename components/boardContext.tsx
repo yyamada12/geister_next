@@ -62,6 +62,7 @@ const reducer = (state, action) => {
         mainBoard,
       };
     case "OPPONENT_MOVE":
+      console.log("opponent move");
       const opponentFrom: Cood = action.payload.from.reversed();
       const opponentTo: Cood = action.payload.to.reversed();
 

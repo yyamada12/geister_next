@@ -2,7 +2,7 @@ import { useEffect, useContext, createContext } from "react";
 import io from "socket.io-client";
 import { usePlayer, useSetPlayer } from "./playerContext";
 import { useDispatchBoard } from "./boardContext";
-import { useSetGame } from "./gameContext";
+import { useGame, useSetGame } from "./gameContext";
 import Cood from "./cood";
 
 const SocketActionContext = createContext(undefined);
@@ -12,23 +12,26 @@ let socket: SocketIOClient.Socket;
 export const SocketProvider: React.FC = ({ children }): JSX.Element => {
   const { setId, setOpponentName } = useSetPlayer();
   const { id, playerName } = usePlayer();
-  const { opponentPrepareDone } = useSetGame();
+
+  const { isOpponentInPreparation } = useGame();
+  const { opponentPrepareDone, setIsPlayerTurn } = useSetGame();
+
   const boardDispatch = useDispatchBoard();
 
   useEffect(() => {
     socket = io("localhost:8080");
     socket.emit("uuid", id);
+
     socket.on("assignId", (id) => {
-      console.log(id);
       setId(id);
     });
-    socket.on("opponent", (name) => {
-      console.log(name);
+
+    socket.on("opponent", (name: string, turn: boolean) => {
       setOpponentName(name);
+      setIsPlayerTurn(turn);
     });
+
     socket.on("move", (from, to) => {
-      console.log("opponent moved");
-      console.log(from, to);
       boardDispatch({
         type: "OPPONENT_MOVE",
         payload: {
@@ -38,8 +41,12 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
       });
     });
 
+    socket.on("opponentTurnEnd", () => {
+      console.log("opponent turn end");
+      setIsPlayerTurn(true);
+    });
+
     socket.on("opponentPrepareDone", () => {
-      console.log("opponent prepare done");
       opponentPrepareDone();
     });
   }, []);
@@ -48,7 +55,7 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
     socket.emit("enter", playerName, id);
   };
 
-  const move = (from: Cood, to: Cood) => {
+  const emitMove = (from: Cood, to: Cood) => {
     console.log(from, to);
     socket.emit("move", from, to, id);
   };
@@ -57,8 +64,15 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
     socket.emit("playerPrepareDone", id);
   };
 
+  const emitTurnEnd = () => {
+    socket.emit("playerTurnEnd", id);
+    console.log("player turn end");
+  };
+
   return (
-    <SocketActionContext.Provider value={{ enter, move, emitPrepareDone }}>
+    <SocketActionContext.Provider
+      value={{ enter, emitMove, emitPrepareDone, emitTurnEnd }}
+    >
       {children}
     </SocketActionContext.Provider>
   );

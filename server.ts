@@ -21,6 +21,10 @@ let players: {
   [id: string]: { name?: string; socketid: string; opponent?: string };
 } = {};
 
+const getOpponentSocketid = (id) => {
+  return players[players[id].opponent].socketid;
+};
+
 io.on("connection", (socket) => {
   console.log("Acces to User:", socket.id);
 
@@ -47,9 +51,10 @@ io.on("connection", (socket) => {
         players[id].opponent = waitingPlayerId;
         players[waitingPlayerId].opponent = id;
 
-        let waitingPlayer = players[waitingPlayerId];
-        socket.to(waitingPlayer.socketid).emit("opponent", userName);
-        socket.emit("opponent", waitingPlayer.name);
+        const turn = Math.floor(Math.random() * 2) === 1;
+        const waitingPlayer = players[waitingPlayerId];
+        socket.to(waitingPlayer.socketid).emit("opponent", userName, turn);
+        socket.emit("opponent", waitingPlayer.name, !turn);
 
         waitingPlayerId = undefined;
         console.log("matched!", userName, waitingPlayer.name);
@@ -60,17 +65,16 @@ io.on("connection", (socket) => {
   });
 
   socket.on("move", (from, to, id) => {
-    console.log("move");
-    const opponentId = players[id].opponent;
-    console.log(opponentId);
-    console.log(players[opponentId].socketid);
-    socket.to(players[opponentId].socketid).emit("move", from, to);
+    socket.to(getOpponentSocketid(id)).emit("move", from, to);
   });
 
   socket.on("playerPrepareDone", (id) => {
-    socket
-      .to(players[players[id].opponent].socketid)
-      .emit("opponentPrepareDone");
+    socket.to(getOpponentSocketid(id)).emit("opponentPrepareDone");
+  });
+
+  socket.on("playerTurnEnd", (id) => {
+    console.log("player", id, "turn end");
+    socket.to(getOpponentSocketid(id)).emit("opponentTurnEnd");
   });
 
   socket.on("disconnect", (_) => {

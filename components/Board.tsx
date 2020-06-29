@@ -4,7 +4,7 @@ import Square from "./square";
 import Cood from "./cood";
 
 import { useBoard, useDispatchBoard } from "./boardContext";
-import { useGame } from "./gameContext";
+import { useGame, useSetGame } from "./gameContext";
 import { useSocketAction } from "../components/socketContext";
 
 import { BOARD_SIZE, SIDE_BOARD_COLS, SIDE_BOARD_ROWS } from "../consts";
@@ -12,10 +12,19 @@ import { BOARD_SIZE, SIDE_BOARD_COLS, SIDE_BOARD_ROWS } from "../consts";
 const Board: React.FC = () => {
   const boardState = useBoard();
   const boardDispatch = useDispatchBoard();
-  const { isPlayerInPreparation, isOpponentInPreparation } = useGame();
-  const [firstClickedSquare, setFirstClickedSquare] = useState(undefined);
 
-  const { move } = useSocketAction();
+  const {
+    isPlayerInPreparation,
+    isOpponentInPreparation,
+    isPlayerTurn,
+  } = useGame();
+  const { setIsPlayerTurn } = useSetGame();
+
+  const [firstClickedSquare, setFirstClickedSquare] = useState<
+    Cood | undefined
+  >(undefined);
+
+  const { emitMove, emitTurnEnd } = useSocketAction();
 
   const handleFirstClick = (c: Cood) => {
     setFirstClickedSquare(c);
@@ -23,10 +32,16 @@ const Board: React.FC = () => {
 
   const handleSecondClick = (sc: Cood) => {
     const fc = firstClickedSquare;
-    // emit move to opponent
-    move(fc, sc);
-    // change state
+
+    // move
+    emitMove(fc, sc);
     boardDispatch({ type: "PLAYER_MOVE", payload: { from: fc, to: sc } });
+
+    // change the turn
+    if (!isPlayerInPreparation) {
+      emitTurnEnd();
+      setIsPlayerTurn(false);
+    }
 
     setFirstClickedSquare(undefined);
   };
@@ -36,29 +51,25 @@ const Board: React.FC = () => {
 
     for (let j = 0; j < BOARD_SIZE; j++) {
       const squareCood = new Cood(i, j);
-      let onClick = () => {};
-      // handle first click
-      if (!firstClickedSquare) {
+      let onClick: () => void;
+
+      const crtSquare = boardState.mainBoard[i][j];
+
+      if (isPlayerInPreparation) {
         // only player's ghosts are clickable
-        if (
-          boardState.mainBoard[i][j].ghost &&
-          boardState.mainBoard[i][j].ghost.ofPlayer
-        )
-          onClick = () => handleFirstClick(squareCood);
-
-        // handle second click
-      } else {
-        // in preparation
-        if (isPlayerInPreparation) {
+        if (crtSquare.ghost && crtSquare.ghost.ofPlayer) {
+          onClick = !firstClickedSquare
+            ? () => handleFirstClick(squareCood)
+            : () => handleSecondClick(squareCood);
+        }
+      } else if (!isOpponentInPreparation && isPlayerTurn) {
+        // first click
+        if (!firstClickedSquare) {
           // only player's ghosts are clickable
-          if (
-            boardState.mainBoard[i][j].ghost &&
-            boardState.mainBoard[i][j].ghost.ofPlayer
-          ) {
-            onClick = () => handleSecondClick(squareCood);
+          if (crtSquare.ghost && crtSquare.ghost.ofPlayer) {
+            onClick = () => handleFirstClick(squareCood);
           }
-
-          // during buttle
+          // second click
         } else {
           // only squares adjacent to firstClickedSquare are clickable
           if (firstClickedSquare.isAdjacent(squareCood)) {

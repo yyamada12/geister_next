@@ -4,7 +4,11 @@ import { useGame, useSetGame } from "../components/gameContext";
 import { useSocketAction } from "../components/socketContext";
 
 const Game: React.FC = () => {
-  const { isPlayerInPreparation, isOpponentInPreparation } = useGame();
+  const {
+    isPlayerInPreparation,
+    isOpponentInPreparation,
+    isPlayerTurn,
+  } = useGame();
   const { playerPrepareDone } = useSetGame();
   const { emitPrepareDone } = useSocketAction();
 
@@ -12,20 +16,24 @@ const Game: React.FC = () => {
     ? "おばけの配置を決定してください"
     : isOpponentInPreparation
     ? "対戦相手が準備中です…"
-    : "ゲーム開始";
+    : isPlayerTurn
+    ? "あなたのターンです"
+    : "相手のターンです";
   return (
     <div>
       <p>{status}</p>
       <Board />
       <br />
-      <button
-        onClick={() => {
-          playerPrepareDone();
-          emitPrepareDone();
-        }}
-      >
-        準備完了
-      </button>
+      {isPlayerInPreparation && (
+        <button
+          onClick={() => {
+            playerPrepareDone();
+            emitPrepareDone();
+          }}
+        >
+          準備完了
+        </button>
+      )}
     </div>
   );
 };
