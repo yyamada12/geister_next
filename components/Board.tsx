@@ -3,6 +3,7 @@ import styles from "./board.module.css";
 import Square from "./square";
 import Ghost from "./ghost";
 import Cood from "./cood";
+import { useBoard, useDispatchBoard } from "./boardContext";
 
 import { useSocketAction } from "../components/socketContext";
 
@@ -10,39 +11,9 @@ interface BoardPropsInterface {
   isPlayerInPreparation: boolean;
 }
 
-const NOMAL = () => {
-  return { ghost: undefined };
-};
-const OP_BL = () => {
-  return { ghost: new Ghost(0, false, false) };
-};
-const OP_WH = () => {
-  return { ghost: new Ghost(0, false, true) };
-};
-const PL_WH = () => {
-  return { ghost: new Ghost(0, true, true) };
-};
-const PL_BL = () => {
-  return { ghost: new Ghost(0, true, false) };
-};
-
 const Board: React.FC<BoardPropsInterface> = ({ isPlayerInPreparation }) => {
-  const [mainBoard, setMainBoard] = useState([
-    [NOMAL(), OP_BL(), OP_BL(), OP_BL(), OP_BL(), NOMAL()],
-    [NOMAL(), OP_WH(), OP_WH(), OP_WH(), OP_WH(), NOMAL()],
-    [NOMAL(), NOMAL(), NOMAL(), NOMAL(), NOMAL(), NOMAL()],
-    [NOMAL(), NOMAL(), NOMAL(), NOMAL(), NOMAL(), NOMAL()],
-    [NOMAL(), PL_WH(), PL_WH(), PL_WH(), PL_WH(), NOMAL()],
-    [NOMAL(), PL_BL(), PL_BL(), PL_BL(), PL_BL(), NOMAL()],
-  ]);
-  const [playerSideBoard, setPlayerSideBoard] = useState([
-    [NOMAL(), NOMAL(), NOMAL(), NOMAL()],
-    [NOMAL(), NOMAL(), NOMAL(), NOMAL()],
-  ]);
-  const [opponentSideBoard, setOpponentSideBoard] = useState([
-    [NOMAL(), NOMAL(), NOMAL(), NOMAL()],
-    [NOMAL(), NOMAL(), NOMAL(), NOMAL()],
-  ]);
+  const boardState = useBoard();
+  const boardDispatch = useDispatchBoard();
   const [firstClickedSquare, setFirstClickedSquare] = useState(undefined);
 
   const { move } = useSocketAction();
@@ -53,16 +24,14 @@ const Board: React.FC<BoardPropsInterface> = ({ isPlayerInPreparation }) => {
 
   const handleSecondClick = (sc: Cood) => {
     const fc = firstClickedSquare;
-    let squares = mainBoard;
+    // emit move to opponent
     move(fc, sc);
+    // change state
+    boardDispatch({ type: "MOVE", payload: { from: fc, to: sc } });
 
-    [squares[sc.x][sc.y], squares[fc.x][fc.y]] = [
-      squares[fc.x][fc.y],
-      squares[sc.x][sc.y],
-    ];
-    setMainBoard(squares);
     setFirstClickedSquare(undefined);
   };
+
   const renderMainBoardRow = (i: number) => {
     const rows = [];
 
@@ -72,7 +41,10 @@ const Board: React.FC<BoardPropsInterface> = ({ isPlayerInPreparation }) => {
       // handle first click
       if (!firstClickedSquare) {
         // only player's ghosts are clickable
-        if (mainBoard[i][j].ghost && mainBoard[i][j].ghost.ofPlayer)
+        if (
+          boardState.mainBoard[i][j].ghost &&
+          boardState.mainBoard[i][j].ghost.ofPlayer
+        )
           onClick = () => handleFirstClick(squareCood);
 
         // handle second click
@@ -80,7 +52,10 @@ const Board: React.FC<BoardPropsInterface> = ({ isPlayerInPreparation }) => {
         // in preparation
         if (isPlayerInPreparation) {
           // only player's ghosts are clickable
-          if (mainBoard[i][j].ghost && mainBoard[i][j].ghost.ofPlayer) {
+          if (
+            boardState.mainBoard[i][j].ghost &&
+            boardState.mainBoard[i][j].ghost.ofPlayer
+          ) {
             onClick = () => handleSecondClick(squareCood);
           }
 
@@ -96,7 +71,7 @@ const Board: React.FC<BoardPropsInterface> = ({ isPlayerInPreparation }) => {
       rows.push(
         <Square
           key={6 * i + j}
-          ghost={mainBoard[i][j].ghost}
+          ghost={boardState.mainBoard[i][j].ghost}
           onClick={onClick}
           isFirstClicked={squareCood.equals(firstClickedSquare)}
         />
@@ -122,8 +97,8 @@ const Board: React.FC<BoardPropsInterface> = ({ isPlayerInPreparation }) => {
 
     for (let j = 0; j < 4; j++) {
       const ghost = isPlayer
-        ? playerSideBoard[i][j].ghost
-        : opponentSideBoard[i][j].ghost;
+        ? boardState.playerSideBoard[i][j].ghost
+        : boardState.opponentSideBoard[i][j].ghost;
       rows.push(<Square key={4 * i + j} ghost={ghost} />);
     }
     return (

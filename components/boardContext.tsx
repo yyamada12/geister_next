@@ -1,53 +1,99 @@
-import { useState, useEffect, useContext, createContext } from "react";
+import {
+  useState,
+  useEffect,
+  useContext,
+  createContext,
+  useReducer,
+} from "react";
+import Ghost from "./ghost";
+import Cood from "./cood";
 
-const defaultState = {
-  id: "",
-  playerName: "",
-  opponentName: "",
+const NOMAL = () => {
+  return { ghost: undefined };
+};
+const OP_BL = () => {
+  return { ghost: new Ghost(0, false, false) };
+};
+const OP_WH = () => {
+  return { ghost: new Ghost(0, false, true) };
+};
+const PL_WH = () => {
+  return { ghost: new Ghost(0, true, true) };
+};
+const PL_BL = () => {
+  return { ghost: new Ghost(0, true, false) };
 };
 
-const PlayerStateContext = createContext(defaultState);
-const PlayerSetContext = createContext({
-  setId: undefined,
-  setPlayerName: undefined,
-  setOpponentName: undefined,
-});
+const defaultState = {
+  mainBoard: [
+    [NOMAL(), OP_BL(), OP_BL(), OP_BL(), OP_BL(), NOMAL()],
+    [NOMAL(), OP_WH(), OP_WH(), OP_WH(), OP_WH(), NOMAL()],
+    [NOMAL(), NOMAL(), NOMAL(), NOMAL(), NOMAL(), NOMAL()],
+    [NOMAL(), NOMAL(), NOMAL(), NOMAL(), NOMAL(), NOMAL()],
+    [NOMAL(), PL_WH(), PL_WH(), PL_WH(), PL_WH(), NOMAL()],
+    [NOMAL(), PL_BL(), PL_BL(), PL_BL(), PL_BL(), NOMAL()],
+  ],
+  playerSideBoard: [
+    [NOMAL(), NOMAL(), NOMAL(), NOMAL()],
+    [NOMAL(), NOMAL(), NOMAL(), NOMAL()],
+  ],
+  opponentSideBoard: [
+    [NOMAL(), NOMAL(), NOMAL(), NOMAL()],
+    [NOMAL(), NOMAL(), NOMAL(), NOMAL()],
+  ],
+};
 
-export const PlayerProvider = ({ children }) => {
+const BoardStateContext = createContext(defaultState);
+const BoardDispatchContext = createContext(undefined);
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "MOVE":
+      let mainBoard = state.mainBoard;
+      const from: Cood = action.payload.from;
+      const to: Cood = action.payload.to;
+
+      [mainBoard[from.x][from.y], mainBoard[to.x][to.y]] = [
+        mainBoard[to.x][to.y],
+        mainBoard[from.x][from.y],
+      ];
+      return {
+        ...state,
+        mainBoard,
+      };
+    case "SET":
+      return action.payload.state;
+    default:
+      throw new Error(`Unknown action: ${action.type}`);
+  }
+};
+
+export const BoardProvider = ({ children }) => {
   const [isInitialized, setIsInitialized] = useState(false);
-  const [id, setId] = useState("");
-  const [playerName, setPlayerName] = useState("");
-  const [opponentName, setOpponentName] = useState("");
+
+  const [state, dispatch] = useReducer(reducer, defaultState);
 
   useEffect(() => {
     if (isInitialized) {
-      localStorage.setItem(
-        "player",
-        JSON.stringify({ id, playerName, opponentName })
-      );
+      sessionStorage.setItem("board", JSON.stringify(state));
     }
-  }, [id, playerName, opponentName]);
+  }, [state]);
 
   useEffect(() => {
     const initialState =
-      JSON.parse(localStorage.getItem("player")) || defaultState;
-    setId(initialState.id);
-    setPlayerName(initialState.playerName);
-    setOpponentName(initialState.opponentName);
-
+      JSON.parse(sessionStorage.getItem("board")) || defaultState;
+    dispatch({ type: "SET", payload: { state: initialState } });
     setIsInitialized(true);
   }, []);
 
   return (
-    <PlayerSetContext.Provider
-      value={{ setId, setPlayerName, setOpponentName }}
-    >
-      <PlayerStateContext.Provider value={{ id, playerName, opponentName }}>
+    <BoardDispatchContext.Provider value={dispatch}>
+      <BoardStateContext.Provider value={state}>
         {children}
-      </PlayerStateContext.Provider>
-    </PlayerSetContext.Provider>
+      </BoardStateContext.Provider>
+    </BoardDispatchContext.Provider>
   );
 };
 
-export const usePlayer = () => useContext(PlayerStateContext);
-export const useSetPlayer = () => useContext(PlayerSetContext);
+export const useBoard = () => useContext(BoardStateContext);
+export const useDispatchBoard = () => useContext(BoardDispatchContext);

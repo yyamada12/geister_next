@@ -1,5 +1,6 @@
 import App from "next/app";
 import { PlayerProvider } from "../components/playerContext";
+import { BoardProvider } from "../components/boardContext";
 import { SocketProvider } from "../components/socketContext";
 
 class MyApp extends App {
@@ -7,9 +8,11 @@ class MyApp extends App {
     const { Component, pageProps } = this.props;
     return (
       <PlayerProvider>
-        <SocketProvider>
-          <Component {...pageProps} />
-        </SocketProvider>
+        <BoardProvider>
+          <SocketProvider>
+            <Component {...pageProps} />
+          </SocketProvider>
+        </BoardProvider>
       </PlayerProvider>
     );
   }
