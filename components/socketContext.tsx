@@ -21,6 +21,10 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
       console.log(name);
       setOpponentName(name);
     });
+    socket.on("move", (from, to) => {
+      console.log("opponent moved");
+      console.log(from, to);
+    });
   }, []);
 
   const enter = () => {

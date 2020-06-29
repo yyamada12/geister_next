@@ -40,6 +40,7 @@ io.on("connection", (socket) => {
     lock.acquire("waitingPlayer", () => {
       if (waitingPlayerId && waitingPlayerId !== uuid) {
         players[uuid].opponent = waitingPlayerId;
+        players[waitingPlayerId].opponent = uuid;
 
         let waitingPlayer = players[waitingPlayerId];
         socket.to(waitingPlayer.socketid).emit("opponent", userName);
@@ -54,7 +55,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("move", (from, to, id) => {
-    socket.to(players[id].opponent).emit(from, to);
+    console.log("move");
+    const opponentId = players[id].opponent;
+    console.log(opponentId);
+    console.log(players[opponentId].socketid);
+    socket.to(players[opponentId].socketid).emit("move", from, to);
   });
 
   socket.on("disconnect", (_) => {
