@@ -18,7 +18,7 @@ const io = socketio.listen(server);
 let waitingPlayerId: string;
 const lock = new AsyncLock();
 let players: {
-  [id: string]: { name: string; socketid: string; opponent?: string };
+  [id: string]: { name?: string; socketid: string; opponent?: string };
 } = {};
 
 io.on("connection", (socket) => {
@@ -28,19 +28,28 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("opponentPrepareDone");
   });
 
-  socket.on("enter", (userName, id) => {
-    // if the client does not have uuid, create and emit a new uuid
-    const uuid = id || uuidv4();
+  socket.on("uuid", (id) => {
     if (!id) {
-      socket.emit("uuid", uuid);
+      // if the client does not have uuid, create and emit a new uuid
+      const newId = uuidv4();
+      socket.emit("assignId", newId);
+      players[newId] = { socketid: socket.id };
+    } else {
+      players[id].socketid = socket.id;
     }
+  });
 
-    players[uuid] = { name: userName, socketid: socket.id };
+  socket.on("enter", (userName, id) => {
+    if (!players[id]) {
+      console.log("invalid id: ", id);
+      return;
+    }
+    players[id] = { name: userName, socketid: socket.id };
 
     lock.acquire("waitingPlayer", () => {
-      if (waitingPlayerId && waitingPlayerId !== uuid) {
-        players[uuid].opponent = waitingPlayerId;
-        players[waitingPlayerId].opponent = uuid;
+      if (waitingPlayerId && waitingPlayerId !== id) {
+        players[id].opponent = waitingPlayerId;
+        players[waitingPlayerId].opponent = id;
 
         let waitingPlayer = players[waitingPlayerId];
         socket.to(waitingPlayer.socketid).emit("opponent", userName);
@@ -49,7 +58,7 @@ io.on("connection", (socket) => {
         waitingPlayerId = undefined;
         console.log("matched!", userName, waitingPlayer.name);
       } else {
-        waitingPlayerId = uuid;
+        waitingPlayerId = id;
       }
     });
   });

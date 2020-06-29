@@ -13,7 +13,8 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
 
   useEffect(() => {
     socket = io("localhost:8080");
-    socket.on("uuid", (id) => {
+    socket.emit("uuid", id);
+    socket.on("assignId", (id) => {
       console.log(id);
       setId(id);
     });
