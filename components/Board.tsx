@@ -2,19 +2,17 @@ import React, { useState } from "react";
 import styles from "./board.module.css";
 import Square from "./square";
 import Cood from "./cood";
-import { useBoard, useDispatchBoard } from "./boardContext";
 
+import { useBoard, useDispatchBoard } from "./boardContext";
+import { useGame } from "./gameContext";
 import { useSocketAction } from "../components/socketContext";
 
 import { BOARD_SIZE, SIDE_BOARD_COLS, SIDE_BOARD_ROWS } from "../consts";
 
-interface BoardPropsInterface {
-  isPlayerInPreparation: boolean;
-}
-
-const Board: React.FC<BoardPropsInterface> = ({ isPlayerInPreparation }) => {
+const Board: React.FC = () => {
   const boardState = useBoard();
   const boardDispatch = useDispatchBoard();
+  const { isPlayerInPreparation, isOpponentInPreparation } = useGame();
   const [firstClickedSquare, setFirstClickedSquare] = useState(undefined);
 
   const { move } = useSocketAction();

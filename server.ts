@@ -24,10 +24,6 @@ let players: {
 io.on("connection", (socket) => {
   console.log("Acces to User:", socket.id);
 
-  socket.on("playerPrepareDone", () => {
-    socket.broadcast.emit("opponentPrepareDone");
-  });
-
   socket.on("uuid", (id) => {
     if (!id) {
       // if the client does not have uuid, create and emit a new uuid
@@ -69,6 +65,12 @@ io.on("connection", (socket) => {
     console.log(opponentId);
     console.log(players[opponentId].socketid);
     socket.to(players[opponentId].socketid).emit("move", from, to);
+  });
+
+  socket.on("playerPrepareDone", (id) => {
+    socket
+      .to(players[players[id].opponent].socketid)
+      .emit("opponentPrepareDone");
   });
 
   socket.on("disconnect", (_) => {

@@ -1,6 +1,7 @@
 import App from "next/app";
 import { PlayerProvider } from "../components/playerContext";
 import { BoardProvider } from "../components/boardContext";
+import { GameProvider } from "../components/gameContext";
 import { SocketProvider } from "../components/socketContext";
 
 class MyApp extends App {
@@ -9,9 +10,11 @@ class MyApp extends App {
     return (
       <PlayerProvider>
         <BoardProvider>
-          <SocketProvider>
-            <Component {...pageProps} />
-          </SocketProvider>
+          <GameProvider>
+            <SocketProvider>
+              <Component {...pageProps} />
+            </SocketProvider>
+          </GameProvider>
         </BoardProvider>
       </PlayerProvider>
     );

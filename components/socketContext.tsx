@@ -2,6 +2,7 @@ import { useEffect, useContext, createContext } from "react";
 import io from "socket.io-client";
 import { usePlayer, useSetPlayer } from "./playerContext";
 import { useDispatchBoard } from "./boardContext";
+import { useSetGame } from "./gameContext";
 import Cood from "./cood";
 
 const SocketActionContext = createContext(undefined);
@@ -11,6 +12,7 @@ let socket: SocketIOClient.Socket;
 export const SocketProvider: React.FC = ({ children }): JSX.Element => {
   const { setId, setOpponentName } = useSetPlayer();
   const { id, playerName } = usePlayer();
+  const { opponentPrepareDone } = useSetGame();
   const boardDispatch = useDispatchBoard();
 
   useEffect(() => {
@@ -35,6 +37,11 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
         },
       });
     });
+
+    socket.on("opponentPrepareDone", () => {
+      console.log("opponent prepare done");
+      opponentPrepareDone();
+    });
   }, []);
 
   const enter = () => {
@@ -46,8 +53,12 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
     socket.emit("move", from, to, id);
   };
 
+  const emitPrepareDone = () => {
+    socket.emit("playerPrepareDone", id);
+  };
+
   return (
-    <SocketActionContext.Provider value={{ enter, move }}>
+    <SocketActionContext.Provider value={{ enter, move, emitPrepareDone }}>
       {children}
     </SocketActionContext.Provider>
   );
