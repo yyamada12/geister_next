@@ -1,6 +1,7 @@
 import { useEffect, useContext, createContext } from "react";
 import io from "socket.io-client";
 import { usePlayer, useSetPlayer } from "./playerContext";
+import { useDispatchBoard } from "./boardContext";
 import Cood from "./cood";
 
 const SocketActionContext = createContext(undefined);
@@ -10,6 +11,7 @@ let socket: SocketIOClient.Socket;
 export const SocketProvider: React.FC = ({ children }): JSX.Element => {
   const { setId, setOpponentName } = useSetPlayer();
   const { id, playerName } = usePlayer();
+  const boardDispatch = useDispatchBoard();
 
   useEffect(() => {
     socket = io("localhost:8080");
@@ -25,6 +27,13 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
     socket.on("move", (from, to) => {
       console.log("opponent moved");
       console.log(from, to);
+      boardDispatch({
+        type: "OPPONENT_MOVE",
+        payload: {
+          from: new Cood(from.x, from.y),
+          to: new Cood(to.x, to.y),
+        },
+      });
     });
   }, []);
 
@@ -33,6 +42,7 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
   };
 
   const move = (from: Cood, to: Cood) => {
+    console.log(from, to);
     socket.emit("move", from, to, id);
   };
 

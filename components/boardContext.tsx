@@ -47,15 +47,30 @@ const BoardStateContext = createContext(defaultState);
 const BoardDispatchContext = createContext(undefined);
 
 const reducer = (state, action) => {
+  let mainBoard = state.mainBoard;
   switch (action.type) {
-    case "MOVE":
-      let mainBoard = state.mainBoard;
+    case "PLAYER_MOVE":
       const from: Cood = action.payload.from;
       const to: Cood = action.payload.to;
 
       [mainBoard[from.x][from.y], mainBoard[to.x][to.y]] = [
         mainBoard[to.x][to.y],
         mainBoard[from.x][from.y],
+      ];
+      return {
+        ...state,
+        mainBoard,
+      };
+    case "OPPONENT_MOVE":
+      const opponentFrom: Cood = action.payload.from.reversed();
+      const opponentTo: Cood = action.payload.to.reversed();
+
+      [
+        mainBoard[opponentFrom.x][opponentFrom.y],
+        mainBoard[opponentTo.x][opponentTo.y],
+      ] = [
+        mainBoard[opponentTo.x][opponentTo.y],
+        mainBoard[opponentFrom.x][opponentFrom.y],
       ];
       return {
         ...state,

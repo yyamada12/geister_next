@@ -28,7 +28,7 @@ const Board: React.FC<BoardPropsInterface> = ({ isPlayerInPreparation }) => {
     // emit move to opponent
     move(fc, sc);
     // change state
-    boardDispatch({ type: "MOVE", payload: { from: fc, to: sc } });
+    boardDispatch({ type: "PLAYER_MOVE", payload: { from: fc, to: sc } });
 
     setFirstClickedSquare(undefined);
   };

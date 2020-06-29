@@ -21,4 +21,7 @@ export default class Cood {
     }
     return false;
   }
+  reversed() {
+    return new Cood(BOARD_SIZE - 1 - this.x, BOARD_SIZE - 1 - this.y);
+  }
 }
