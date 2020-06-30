@@ -26,24 +26,22 @@ const Board: React.FC = () => {
 
   const { emitMove, emitTurnEnd } = useSocketAction();
 
-  const handleFirstClick = (c: Cood) => {
-    setFirstClickedSquare(c);
+  const handleFirstClick = (fc: Cood) => {
+    setFirstClickedSquare(fc);
   };
 
   const handleSecondClick = (sc: Cood) => {
     const fc = firstClickedSquare;
 
-    // move
     emitMove(fc, sc);
     boardDispatch({ type: "PLAYER_MOVE", payload: { from: fc, to: sc } });
 
-    // change the turn
-    if (!isPlayerInPreparation) {
-      emitTurnEnd();
-      setIsPlayerTurn(false);
-    }
-
     setFirstClickedSquare(undefined);
+  };
+
+  const turnEnd = () => {
+    emitTurnEnd();
+    setIsPlayerTurn(false);
   };
 
   const renderMainBoardRow = (i: number) => {
@@ -59,8 +57,8 @@ const Board: React.FC = () => {
         // only player's ghosts are clickable
         if (crtSquare.ghost && crtSquare.ghost.ofPlayer) {
           onClick = !firstClickedSquare
-            ? () => handleFirstClick(squareCood)
-            : () => handleSecondClick(squareCood);
+            ? () => handleFirstClick(squareCood) // first click
+            : () => handleSecondClick(squareCood); // second click
         }
       } else if (!isOpponentInPreparation && isPlayerTurn) {
         // first click
@@ -73,7 +71,10 @@ const Board: React.FC = () => {
         } else {
           // only squares adjacent to firstClickedSquare are clickable
           if (firstClickedSquare.isAdjacent(squareCood)) {
-            onClick = () => handleSecondClick(squareCood);
+            onClick = () => {
+              handleSecondClick(squareCood);
+              turnEnd();
+            };
           }
         }
       }
