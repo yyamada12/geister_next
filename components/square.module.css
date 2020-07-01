@@ -29,3 +29,7 @@
 .reversed {
   transform: rotate(180deg);
 }
+
+.clickable {
+  background-color: yellowgreen;
+}

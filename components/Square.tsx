@@ -2,6 +2,8 @@ import React from "react";
 import styles from "./square.module.css";
 import Ghost from "./ghost";
 
+import classNames from "classnames";
+
 type BoardType = "MAIN_BOARD" | "PLAYER_SIDE_BOARD" | "OPPONENT_SIDE_BOARD";
 
 interface SquarePropsInterface {
@@ -15,7 +17,7 @@ const whiteGhost = (reversed: boolean) => (
   <img
     src="/images/white_ghost.svg"
     alt="White Ghost"
-    className={styles.ghost + (reversed ? " " + styles.reversed : "")}
+    className={classNames(styles.ghost, { [styles.reversed]: reversed })}
   />
 );
 
@@ -23,7 +25,7 @@ const blackGhost = (reversed: boolean) => (
   <img
     src="/images/black_ghost.svg"
     alt="Black Ghost"
-    className={styles.ghost + (reversed ? " " + styles.reversed : "")}
+    className={classNames(styles.ghost, { [styles.reversed]: reversed })}
   />
 );
 
@@ -58,9 +60,10 @@ export default function Square(props: SquarePropsInterface) {
 
   return (
     <button
-      className={
-        styles.square + " " + (props.isFirstClicked ? styles.firstClicked : "")
-      }
+      className={classNames(styles.square, {
+        [styles.firstClicked]: props.isFirstClicked,
+        [styles.clickable]: !props.isFirstClicked && props.onClick,
+      })}
       onClick={props.onClick}
     >
       {ghostImage}
