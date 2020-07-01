@@ -7,7 +7,6 @@ import {
 } from "react";
 
 import Ghost from "./ghost";
-import Cood from "./cood";
 
 import { GHOST_NUM } from "../consts";
 

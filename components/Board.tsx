@@ -18,7 +18,7 @@ const Board: React.FC = () => {
     isOpponentInPreparation,
     isPlayerTurn,
   } = useGame();
-  const { setIsPlayerTurn } = useSetGame();
+  const { setIsPlayerTurn, setIsPlayerWin } = useSetGame();
 
   const [firstClickedSquare, setFirstClickedSquare] = useState<
     Cood | undefined
@@ -42,6 +42,28 @@ const Board: React.FC = () => {
   const turnEnd = () => {
     emitTurnEnd();
     setIsPlayerTurn(false);
+    judgeWinnerAtPlayerAction();
+  };
+
+  const judgeWinnerAtPlayerAction = () => {
+    if (boardState.playerSideGhosts[0] == GHOST_NUM) {
+      // take 4 white ghosts
+      setIsPlayerWin(true);
+    } else if (boardState.playerSideGhosts[1] == GHOST_NUM) {
+      // take 4 black ghosts
+      setIsPlayerWin(false);
+    } else if (isOpponentGhostAtGoal()) {
+      // opponent white ghost arrived at the goal
+      setIsPlayerWin(false);
+    }
+  };
+
+  const isOpponentGhostAtGoal = () => {
+    const g1 = boardState.mainBoard[5][0].ghost;
+    const g2 = boardState.mainBoard[5][5].ghost;
+    return (
+      (g1 && g1.isWhite && !g1.ofPlayer) || (g2 && g2.isWhite && !g2.ofPlayer)
+    );
   };
 
   const renderMainBoardRow = (i: number) => {

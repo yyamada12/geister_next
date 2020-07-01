@@ -4,6 +4,7 @@ const defaultState = {
   isPlayerInPreparation: true,
   isOpponentInPreparation: true,
   isPlayerTurn: undefined,
+  isPlayerWin: undefined,
 };
 
 const GameStateContext = createContext(defaultState);
@@ -14,6 +15,7 @@ export const GameProvider = ({ children }) => {
   const [isPlayerInPreparation, setIsPlayerInPreparation] = useState(true);
   const [isOpponentInPreparation, setIsOpponentInPreparation] = useState(true);
   const [isPlayerTurn, setIsPlayerTurn] = useState(undefined);
+  const [isPlayerWin, setIsPlayerWin] = useState(undefined);
 
   const playerPrepareDone = () => setIsPlayerInPreparation(false);
   const opponentPrepareDone = () => setIsOpponentInPreparation(false);
@@ -25,10 +27,16 @@ export const GameProvider = ({ children }) => {
           isPlayerInPreparation,
           isOpponentInPreparation,
           isPlayerTurn,
+          isPlayerWin,
         })
       );
     }
-  }, [isPlayerInPreparation, isOpponentInPreparation, isPlayerTurn]);
+  }, [
+    isPlayerInPreparation,
+    isOpponentInPreparation,
+    isPlayerTurn,
+    isPlayerWin,
+  ]);
 
   useEffect(() => {
     const initialState =
@@ -36,6 +44,7 @@ export const GameProvider = ({ children }) => {
     setIsPlayerInPreparation(initialState.isPlayerInPreparation);
     setIsOpponentInPreparation(initialState.isOpponentInPreparation);
     setIsPlayerTurn(initialState.isPlayerTurn);
+    setIsPlayerWin(initialState.isPlayerWin);
 
     setIsInitialized(true);
   }, []);
@@ -46,10 +55,16 @@ export const GameProvider = ({ children }) => {
         playerPrepareDone,
         opponentPrepareDone,
         setIsPlayerTurn,
+        setIsPlayerWin,
       }}
     >
       <GameStateContext.Provider
-        value={{ isPlayerInPreparation, isOpponentInPreparation, isPlayerTurn }}
+        value={{
+          isPlayerInPreparation,
+          isOpponentInPreparation,
+          isPlayerTurn,
+          isPlayerWin,
+        }}
       >
         {children}
       </GameStateContext.Provider>

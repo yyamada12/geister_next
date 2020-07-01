@@ -1,9 +1,10 @@
 import { useEffect, useContext, createContext } from "react";
 import io from "socket.io-client";
 import { usePlayer, useSetPlayer } from "./playerContext";
-import { useDispatchBoard } from "./boardContext";
+import { useBoard, useDispatchBoard } from "./boardContext";
 import { useGame, useSetGame } from "./gameContext";
 import Cood from "./cood";
+import { GHOST_NUM } from "../consts";
 
 const SocketActionContext = createContext(undefined);
 
@@ -14,8 +15,9 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
   const { id, playerName } = usePlayer();
 
   const { isOpponentInPreparation } = useGame();
-  const { opponentPrepareDone, setIsPlayerTurn } = useSetGame();
+  const { opponentPrepareDone, setIsPlayerTurn, setIsPlayerWin } = useSetGame();
 
+  const boardState = useBoard();
   const boardDispatch = useDispatchBoard();
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
     });
 
     socket.on("opponentTurnEnd", () => {
-      console.log("opponent turn end");
+      judgeWinnerAtOpponentAction();
       setIsPlayerTurn(true);
     });
 
@@ -67,6 +69,27 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
   const emitTurnEnd = () => {
     socket.emit("playerTurnEnd", id);
     console.log("player turn end");
+  };
+
+  const judgeWinnerAtOpponentAction = () => {
+    if (boardState.opponentSideGhosts[0] == GHOST_NUM) {
+      // take 4 black ghosts
+      setIsPlayerWin(true);
+    } else if (boardState.opponentSideGhosts[1] == GHOST_NUM) {
+      // take 4 white ghosts
+      setIsPlayerWin(false);
+    } else if (isPlayerGhostAtGoal()) {
+      // player's white ghost arrived at the goal
+      setIsPlayerWin(true);
+    }
+  };
+
+  const isPlayerGhostAtGoal = () => {
+    const g1 = boardState.mainBoard[0][0].ghost;
+    const g2 = boardState.mainBoard[0][5].ghost;
+    return (
+      (g1 && g1.isWhite && g1.ofPlayer) || (g2 && g2.isWhite && g2.ofPlayer)
+    );
   };
 
   return (
