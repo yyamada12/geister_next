@@ -104,17 +104,17 @@ const Board: React.FC = () => {
     return board;
   };
 
-  const renderSideBoardRow = (i: number, isPlayer: boolean) => {
+  const renderSideBoardRow = (i: number, ofPlayer: boolean) => {
     const rows = [];
 
     for (let j = 0; j < GHOST_NUM; j++) {
-      const ghost = isPlayer
+      const ghost = ofPlayer
         ? boardState.playerSideBoard[i][j].ghost
         : boardState.opponentSideBoard[i][j].ghost;
       rows.push(
         <Square
           key={GHOST_NUM * i + j}
-          board={isPlayer ? "PLAYER_SIDE_BOARD" : "OPPONENT_SIDE_BOARD"}
+          board={ofPlayer ? "PLAYER_SIDE_BOARD" : "OPPONENT_SIDE_BOARD"}
           ghost={ghost}
         />
       );
@@ -126,10 +126,10 @@ const Board: React.FC = () => {
     );
   };
 
-  const renderSideBoard = (isPlayer: boolean) => {
+  const renderSideBoard = (ofPlayer: boolean) => {
     const board = [];
     for (let i = 0; i < GHOST_COLORS; i++) {
-      board.push(renderSideBoardRow(i, isPlayer));
+      board.push(renderSideBoardRow(i, ofPlayer));
     }
     return board;
   };
