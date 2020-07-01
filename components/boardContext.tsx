@@ -5,8 +5,11 @@ import {
   createContext,
   useReducer,
 } from "react";
+
 import Ghost from "./ghost";
 import Cood from "./cood";
+
+import { GHOST_NUM } from "../consts";
 
 const NOMAL = () => {
   return { ghost: undefined };
@@ -41,47 +44,90 @@ const defaultState = {
     [NOMAL(), NOMAL(), NOMAL(), NOMAL()],
     [NOMAL(), NOMAL(), NOMAL(), NOMAL()],
   ],
+  playerSideGhosts: [0, 0],
+  opponentSideGhosts: [GHOST_NUM - 1, GHOST_NUM - 1],
 };
 
 const BoardStateContext = createContext(defaultState);
 const BoardDispatchContext = createContext(undefined);
 
 const reducer = (state, action) => {
-  let mainBoard = state.mainBoard;
   switch (action.type) {
     case "PLAYER_MOVE":
-      const from: Cood = action.payload.from;
-      const to: Cood = action.payload.to;
-
-      [mainBoard[from.x][from.y], mainBoard[to.x][to.y]] = [
-        mainBoard[to.x][to.y],
-        mainBoard[from.x][from.y],
-      ];
+      const { mainBoard, playerSideBoard, playerSideGhosts } = handlePlayerMove(
+        state,
+        action.payload
+      );
       return {
         ...state,
         mainBoard,
+        playerSideBoard,
+        playerSideGhosts,
       };
     case "OPPONENT_MOVE":
-      console.log("opponent move");
-      const opponentFrom: Cood = action.payload.from.reversed();
-      const opponentTo: Cood = action.payload.to.reversed();
-
-      [
-        mainBoard[opponentFrom.x][opponentFrom.y],
-        mainBoard[opponentTo.x][opponentTo.y],
-      ] = [
-        mainBoard[opponentTo.x][opponentTo.y],
-        mainBoard[opponentFrom.x][opponentFrom.y],
-      ];
+      const opponentState = handleOpponentMove(state, action.payload);
       return {
         ...state,
-        mainBoard,
+        ...opponentState,
       };
     case "SET":
       return action.payload.state;
     default:
       throw new Error(`Unknown action: ${action.type}`);
   }
+};
+
+const handlePlayerMove = (
+  { mainBoard, playerSideBoard, playerSideGhosts },
+  { from, to }
+) => {
+  const targetGhost = mainBoard[to.x][to.y].ghost;
+  if (targetGhost && !targetGhost.ofPlayer) {
+    const targetColor = targetGhost.isWhite ? 0 : 1;
+    swap(
+      to,
+      mainBoard,
+      {
+        x: targetColor,
+        y: playerSideGhosts[targetColor],
+      },
+      playerSideBoard
+    );
+    playerSideGhosts[targetColor] += 1;
+  }
+  swap(from, mainBoard, to, mainBoard);
+  return { mainBoard, playerSideBoard, playerSideGhosts };
+};
+
+const handleOpponentMove = (
+  { mainBoard, opponentSideBoard, opponentSideGhosts },
+  { from, to }
+) => {
+  from = from.reversed();
+  to = to.reversed();
+  const targetGhost = mainBoard[to.x][to.y].ghost;
+  if (targetGhost && targetGhost.ofPlayer) {
+    const targetColor = targetGhost.isWhite ? 1 : 0;
+    swap(
+      to,
+      mainBoard,
+      {
+        x: targetColor,
+        y: opponentSideGhosts[targetColor],
+      },
+      opponentSideBoard
+    );
+    opponentSideGhosts[targetColor] -= 1;
+  }
+  swap(from, mainBoard, to, mainBoard);
+  return { mainBoard, opponentSideBoard, opponentSideGhosts };
+};
+
+const swap = (from, fromBoard, to, toBoard) => {
+  [fromBoard[from.x][from.y], toBoard[to.x][to.y]] = [
+    toBoard[to.x][to.y],
+    fromBoard[from.x][from.y],
+  ];
 };
 
 export const BoardProvider = ({ children }) => {

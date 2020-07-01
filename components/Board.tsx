@@ -7,7 +7,7 @@ import { useBoard, useDispatchBoard } from "./boardContext";
 import { useGame, useSetGame } from "./gameContext";
 import { useSocketAction } from "../components/socketContext";
 
-import { BOARD_SIZE, SIDE_BOARD_COLS, SIDE_BOARD_ROWS } from "../consts";
+import { BOARD_SIZE, GHOST_NUM, GHOST_COLORS } from "../consts";
 
 const Board: React.FC = () => {
   const boardState = useBoard();
@@ -106,11 +106,11 @@ const Board: React.FC = () => {
   const renderSideBoardRow = (i: number, isPlayer: boolean) => {
     const rows = [];
 
-    for (let j = 0; j < SIDE_BOARD_COLS; j++) {
+    for (let j = 0; j < GHOST_NUM; j++) {
       const ghost = isPlayer
         ? boardState.playerSideBoard[i][j].ghost
         : boardState.opponentSideBoard[i][j].ghost;
-      rows.push(<Square key={SIDE_BOARD_COLS * i + j} ghost={ghost} />);
+      rows.push(<Square key={GHOST_NUM * i + j} ghost={ghost} />);
     }
     return (
       <div className="board-row" key={i}>
@@ -121,7 +121,7 @@ const Board: React.FC = () => {
 
   const renderSideBoard = (isPlayer: boolean) => {
     const board = [];
-    for (let i = 0; i < SIDE_BOARD_ROWS; i++) {
+    for (let i = 0; i < GHOST_COLORS; i++) {
       board.push(renderSideBoardRow(i, isPlayer));
     }
     return board;
