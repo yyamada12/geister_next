@@ -82,6 +82,7 @@ const Board: React.FC = () => {
       rows.push(
         <Square
           key={BOARD_SIZE * i + j}
+          board="MAIN_BOARD"
           ghost={boardState.mainBoard[i][j].ghost}
           onClick={onClick}
           isFirstClicked={squareCood.equals(firstClickedSquare)}
@@ -110,7 +111,13 @@ const Board: React.FC = () => {
       const ghost = isPlayer
         ? boardState.playerSideBoard[i][j].ghost
         : boardState.opponentSideBoard[i][j].ghost;
-      rows.push(<Square key={GHOST_NUM * i + j} ghost={ghost} />);
+      rows.push(
+        <Square
+          key={GHOST_NUM * i + j}
+          board={isPlayer ? "PLAYER_SIDE_BOARD" : "OPPONENT_SIDE_BOARD"}
+          ghost={ghost}
+        />
+      );
     }
     return (
       <div className="board-row" key={i}>
