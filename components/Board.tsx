@@ -101,6 +101,13 @@ const Board: React.FC = () => {
         }
       }
 
+      const isGoal = [
+        new Cood(0, 0),
+        new Cood(0, 5),
+        new Cood(5, 0),
+        new Cood(5, 5),
+      ].some((cood) => cood.equals(squareCood));
+
       rows.push(
         <Square
           key={BOARD_SIZE * i + j}
@@ -108,6 +115,7 @@ const Board: React.FC = () => {
           ghost={boardState.mainBoard[i][j].ghost}
           onClick={onClick}
           isFirstClicked={squareCood.equals(firstClickedSquare)}
+          isGoal={isGoal}
         />
       );
     }

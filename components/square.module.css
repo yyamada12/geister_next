@@ -26,10 +26,34 @@
   height: auto;
 }
 
+.goal {
+  background-color: #cbf5ff;
+  background-size: 10px 10px;
+  background-position: 0 0, 5px 5px;
+  background-image: linear-gradient(
+      45deg,
+      #6dc2f3 25%,
+      #6dc2f3 25%,
+      transparent 25%,
+      transparent 75%,
+      #6dc2f3 75%,
+      #6dc2f3 75%
+    ),
+    linear-gradient(
+      -135deg,
+      #6dc2f3 25%,
+      #6dc2f3 25%,
+      transparent 25%,
+      transparent 75%,
+      #6dc2f3 75%,
+      #6dc2f3 75%
+    );
+}
+
 .reversed {
   transform: rotate(180deg);
 }
 
 .clickable {
-  background-color: yellowgreen;
+  background-color: #bcf7d3;
 }

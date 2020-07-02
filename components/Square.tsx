@@ -11,6 +11,7 @@ interface SquarePropsInterface {
   board: BoardType;
   onClick?: () => void;
   isFirstClicked?: boolean;
+  isGoal?: boolean;
 }
 
 const whiteGhost = (reversed: boolean) => (
@@ -63,6 +64,7 @@ export default function Square(props: SquarePropsInterface) {
       className={classNames(styles.square, {
         [styles.firstClicked]: props.isFirstClicked,
         [styles.clickable]: !props.isFirstClicked && props.onClick,
+        [styles.goal]: props.isGoal,
       })}
       onClick={props.onClick}
     >
