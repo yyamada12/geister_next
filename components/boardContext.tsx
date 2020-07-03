@@ -4,58 +4,76 @@ import {
   useContext,
   createContext,
   useReducer,
+  Dispatch,
 } from "react";
 
-import Ghost from "./ghost";
-
 import { GHOST_NUM } from "../consts";
+import Cood from "./cood";
 
-const NOMAL = () => {
-  return { ghost: undefined };
+type TGhost = { ofPlayer: boolean; isWhite: boolean };
+type TSquare = { ghost: undefined | TGhost };
+type TBoard = Array<Array<TSquare>>;
+type TCood = { x: number; y: number };
+type TState = {
+  mainBoard: TBoard;
+  playerSideBoard: TBoard;
+  opponentSideBoard: TBoard;
+  playerSideGhosts: Array<number>;
+  opponentSideGhosts: Array<number>;
 };
-const OP_BL = () => {
-  return { ghost: new Ghost(0, false, false) };
-};
-const OP_WH = () => {
-  return { ghost: new Ghost(0, false, true) };
-};
-const PL_WH = () => {
-  return { ghost: new Ghost(0, true, true) };
-};
-const PL_BL = () => {
-  return { ghost: new Ghost(0, true, false) };
+type TAction = {
+  type: ActionType;
+  payload: {
+    from?: Cood;
+    to?: Cood;
+    state?: TState;
+  };
 };
 
-const defaultState = {
+export enum ActionType {
+  PLAYER_MOVE = "PLAYER_MOVE",
+  OPPONENT_MOVE = "OPPONENT_MOVE",
+  SET = "SET",
+}
+
+const NOMAL: TSquare = { ghost: undefined };
+
+const OP_BL: TSquare = { ghost: { ofPlayer: false, isWhite: false } };
+const OP_WH: TSquare = { ghost: { ofPlayer: false, isWhite: true } };
+const PL_WH: TSquare = { ghost: { ofPlayer: true, isWhite: true } };
+const PL_BL: TSquare = { ghost: { ofPlayer: true, isWhite: false } };
+
+const defaultState: TState = {
   mainBoard: [
-    [NOMAL(), OP_BL(), OP_BL(), OP_BL(), OP_BL(), NOMAL()],
-    [NOMAL(), OP_WH(), OP_WH(), OP_WH(), OP_WH(), NOMAL()],
-    [NOMAL(), NOMAL(), NOMAL(), NOMAL(), NOMAL(), NOMAL()],
-    [NOMAL(), NOMAL(), NOMAL(), NOMAL(), NOMAL(), NOMAL()],
-    [NOMAL(), PL_WH(), PL_WH(), PL_WH(), PL_WH(), NOMAL()],
-    [NOMAL(), PL_BL(), PL_BL(), PL_BL(), PL_BL(), NOMAL()],
+    [NOMAL, OP_BL, OP_BL, OP_BL, OP_BL, NOMAL],
+    [NOMAL, OP_WH, OP_WH, OP_WH, OP_WH, NOMAL],
+    [NOMAL, NOMAL, NOMAL, NOMAL, NOMAL, NOMAL],
+    [NOMAL, NOMAL, NOMAL, NOMAL, NOMAL, NOMAL],
+    [NOMAL, PL_WH, PL_WH, PL_WH, PL_WH, NOMAL],
+    [NOMAL, PL_BL, PL_BL, PL_BL, PL_BL, NOMAL],
   ],
   playerSideBoard: [
-    [NOMAL(), NOMAL(), NOMAL(), NOMAL()],
-    [NOMAL(), NOMAL(), NOMAL(), NOMAL()],
+    [NOMAL, NOMAL, NOMAL, NOMAL],
+    [NOMAL, NOMAL, NOMAL, NOMAL],
   ],
   opponentSideBoard: [
-    [NOMAL(), NOMAL(), NOMAL(), NOMAL()],
-    [NOMAL(), NOMAL(), NOMAL(), NOMAL()],
+    [NOMAL, NOMAL, NOMAL, NOMAL],
+    [NOMAL, NOMAL, NOMAL, NOMAL],
   ],
   playerSideGhosts: [0, 0],
   opponentSideGhosts: [GHOST_NUM - 1, GHOST_NUM - 1],
 };
 
-const BoardStateContext = createContext(defaultState);
-const BoardDispatchContext = createContext(undefined);
+const BoardStateContext = createContext<TState>(defaultState);
+const BoardDispatchContext = createContext<Dispatch<TAction>>(undefined);
 
-const reducer = (state, action) => {
+const reducer: React.Reducer<TState, TAction> = (state, action) => {
   switch (action.type) {
-    case "PLAYER_MOVE":
+    case ActionType.PLAYER_MOVE:
       const { mainBoard, playerSideBoard, playerSideGhosts } = handlePlayerMove(
         state,
-        action.payload
+        action.payload.to,
+        action.payload.from
       );
       return {
         ...state,
@@ -63,13 +81,17 @@ const reducer = (state, action) => {
         playerSideBoard,
         playerSideGhosts,
       };
-    case "OPPONENT_MOVE":
-      const opponentState = handleOpponentMove(state, action.payload);
+    case ActionType.OPPONENT_MOVE:
+      const opponentState = handleOpponentMove(
+        state,
+        action.payload.to,
+        action.payload.from
+      );
       return {
         ...state,
         ...opponentState,
       };
-    case "SET":
+    case ActionType.SET:
       return action.payload.state;
     default:
       throw new Error(`Unknown action: ${action.type}`);
@@ -78,7 +100,8 @@ const reducer = (state, action) => {
 
 const handlePlayerMove = (
   { mainBoard, playerSideBoard, playerSideGhosts },
-  { from, to }
+  from: Cood,
+  to: Cood
 ) => {
   const targetGhost = mainBoard[to.x][to.y].ghost;
   if (targetGhost && !targetGhost.ofPlayer) {
@@ -99,8 +122,9 @@ const handlePlayerMove = (
 };
 
 const handleOpponentMove = (
-  { mainBoard, opponentSideBoard, opponentSideGhosts },
-  { from, to }
+  { mainBoard, opponentSideBoard, opponentSideGhosts }: TState,
+  from: Cood,
+  to: Cood
 ) => {
   from = from.reversed();
   to = to.reversed();
@@ -122,7 +146,7 @@ const handleOpponentMove = (
   return { mainBoard, opponentSideBoard, opponentSideGhosts };
 };
 
-const swap = (from, fromBoard, to, toBoard) => {
+const swap = (from: TCood, fromBoard: TBoard, to: TCood, toBoard: TBoard) => {
   [fromBoard[from.x][from.y], toBoard[to.x][to.y]] = [
     toBoard[to.x][to.y],
     fromBoard[from.x][from.y],
@@ -130,7 +154,7 @@ const swap = (from, fromBoard, to, toBoard) => {
 };
 
 export const BoardProvider = ({ children }) => {
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
   const [state, dispatch] = useReducer(reducer, defaultState);
 
@@ -141,9 +165,9 @@ export const BoardProvider = ({ children }) => {
   }, [state]);
 
   useEffect(() => {
-    const initialState =
+    const initialState: TState =
       JSON.parse(sessionStorage.getItem("board")) || defaultState;
-    dispatch({ type: "SET", payload: { state: initialState } });
+    dispatch({ type: ActionType.SET, payload: { state: initialState } });
     setIsInitialized(true);
   }, []);
 

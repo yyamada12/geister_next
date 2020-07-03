@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./board.module.css";
 import Square from "./square";
 import Cood from "./cood";
-import { useBoard, useDispatchBoard } from "./boardContext";
+import { useBoard, useDispatchBoard, ActionType } from "./boardContext";
 import { useGame, useSetGame } from "./gameContext";
 import { useSocketAction } from "../components/socketContext";
 import { BOARD_SIZE, GHOST_NUM, GHOST_COLORS } from "../consts";
@@ -46,7 +46,10 @@ const Board: React.FC = () => {
     const fc = firstClickedSquare;
 
     emitMove(fc, sc);
-    boardDispatch({ type: "PLAYER_MOVE", payload: { from: fc, to: sc } });
+    boardDispatch({
+      type: ActionType.PLAYER_MOVE,
+      payload: { from: fc, to: sc },
+    });
 
     setFirstClickedSquare(undefined);
   };

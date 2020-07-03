@@ -1,7 +1,7 @@
 import { useEffect, useContext, createContext } from "react";
 import io from "socket.io-client";
 import { usePlayer, useSetPlayer } from "./playerContext";
-import { useBoard, useDispatchBoard } from "./boardContext";
+import { useBoard, useDispatchBoard, ActionType } from "./boardContext";
 import { useGame, useSetGame } from "./gameContext";
 import Cood from "./cood";
 import { GHOST_NUM } from "../consts";
@@ -35,7 +35,7 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
 
     socket.on("move", (from, to) => {
       boardDispatch({
-        type: "OPPONENT_MOVE",
+        type: ActionType.OPPONENT_MOVE,
         payload: {
           from: new Cood(from.x, from.y),
           to: new Cood(to.x, to.y),
