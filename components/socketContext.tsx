@@ -2,9 +2,8 @@ import { useEffect, useContext, createContext } from "react";
 import io from "socket.io-client";
 import { usePlayer, useSetPlayer } from "./playerContext";
 import { useBoard, useDispatchBoard, ActionType } from "./boardContext";
-import { useGame, useSetGame } from "./gameContext";
+import { useSetGame } from "./gameContext";
 import Cood from "./cood";
-import { GHOST_NUM } from "../consts";
 
 const SocketActionContext = createContext(undefined);
 
@@ -14,18 +13,17 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
   const { setId, setOpponentName } = useSetPlayer();
   const { id, playerName } = usePlayer();
 
-  const { isOpponentInPreparation } = useGame();
   const { opponentPrepareDone, setIsPlayerTurn, setIsPlayerWin } = useSetGame();
 
   const boardState = useBoard();
   const boardDispatch = useDispatchBoard();
 
   useEffect(() => {
-    socket = io("localhost:8080");
+    socket = io(":8080");
     socket.emit("uuid", id);
 
-    socket.on("assignId", (id) => {
-      setId(id);
+    socket.on("assignId", (newId: string) => {
+      setId(newId);
     });
 
     socket.on("opponent", (name: string, turn: boolean) => {
