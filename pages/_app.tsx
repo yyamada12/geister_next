@@ -1,8 +1,8 @@
 import App from "next/app";
-import { PlayerProvider } from "../components/playerContext";
-import { BoardProvider } from "../components/boardContext";
-import { GameProvider } from "../components/gameContext";
-import { SocketProvider } from "../components/socketContext";
+import { PlayerProvider } from "../contexts/playerContext";
+import { BoardProvider } from "../contexts/boardContext";
+import { GameProvider } from "../contexts/gameContext";
+import { SocketProvider } from "../contexts/socketContext";
 
 class MyApp extends App {
   render() {

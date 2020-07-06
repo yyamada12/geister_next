@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 
-import { usePlayer } from "../components/playerContext";
-import { useSocketAction } from "../components/socketContext";
+import { usePlayer } from "../contexts/playerContext";
+import { useSocketAction } from "../contexts/socketContext";
 
 export default function Lobby() {
   const { opponentName } = usePlayer();

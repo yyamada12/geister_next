@@ -3,7 +3,7 @@ import React, { useState, useContext } from "react";
 import Head from "next/head";
 import Link from "next/link";
 
-import { useSetPlayer } from "../components/playerContext";
+import { useSetPlayer } from "../contexts/playerContext";
 
 export default function Home() {
   const [name, setName] = useState("");

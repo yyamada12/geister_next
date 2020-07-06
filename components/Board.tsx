@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
-import styles from "./board.module.css";
+import styles from "../css_modules/board.module.css";
 import Square from "./square";
-import Cood from "./cood";
-import { useBoard, useDispatchBoard, ActionType } from "./boardContext";
-import { useGame, useSetGame } from "./gameContext";
-import { useSocketAction } from "../components/socketContext";
+import Cood from "../classes/cood";
+import {
+  useBoard,
+  useDispatchBoard,
+  ActionType,
+} from "../contexts/boardContext";
+import { useGame, useSetGame } from "../contexts/gameContext";
+import { useSocketAction } from "../contexts/socketContext";
 import { BOARD_SIZE, GHOST_NUM, GHOST_COLORS } from "../consts";
 
 const Board: React.FC = () => {

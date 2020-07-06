@@ -1,6 +1,6 @@
 import React from "react";
-import styles from "./square.module.css";
-import Ghost from "./ghost";
+import styles from "../css_modules/square.module.css";
+import Ghost from "../classes//ghost";
 
 import classNames from "classnames";
 

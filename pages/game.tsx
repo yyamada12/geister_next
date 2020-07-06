@@ -1,7 +1,7 @@
 import React from "react";
 import Board from "../components/board";
-import { useGame, useSetGame } from "../components/gameContext";
-import { useSocketAction } from "../components/socketContext";
+import { useGame, useSetGame } from "../contexts/gameContext";
+import { useSocketAction } from "../contexts/socketContext";
 
 const Game: React.FC = () => {
   const {

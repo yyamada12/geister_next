@@ -8,7 +8,7 @@ import {
 } from "react";
 
 import { GHOST_NUM } from "../consts";
-import Cood from "./cood";
+import Cood from "../classes//cood";
 
 type TGhost = { ofPlayer: boolean; isWhite: boolean };
 type TSquare = { ghost: undefined | TGhost };

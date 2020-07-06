@@ -3,7 +3,7 @@ import io from "socket.io-client";
 import { usePlayer, useSetPlayer } from "./playerContext";
 import { useBoard, useDispatchBoard, ActionType } from "./boardContext";
 import { useSetGame } from "./gameContext";
-import Cood from "./cood";
+import Cood from "../classes/cood";
 
 const SocketActionContext = createContext(undefined);
 
