@@ -46,6 +46,10 @@ const Board: React.FC = () => {
     setFirstClickedSquare(fc);
   };
 
+  const resetFirstClick = () => {
+    setFirstClickedSquare(undefined);
+  };
+
   const handleSecondClick = (sc: Cood) => {
     const fc = firstClickedSquare;
 
@@ -65,33 +69,74 @@ const Board: React.FC = () => {
   };
 
   const takeHandleClick = (cood: Cood) => {
-    const crtSquare = boardState.mainBoard[cood.x][cood.y];
+    const crtGhost = boardState.mainBoard[cood.x][cood.y].ghost;
 
+    // in preparation
     if (isPlayerInPreparation) {
-      // only player's ghosts are clickable
-      if (crtSquare.ghost && crtSquare.ghost.ofPlayer) {
-        return !firstClickedSquare
-          ? () => handleFirstClick(cood) // first click
-          : () => handleSecondClick(cood); // second click
+      // first click
+      if (!firstClickedSquare) {
+        // only player's ghosts are clickable
+        if (crtGhost && crtGhost.ofPlayer) {
+          return {
+            handleClick: () => handleFirstClick(cood),
+            isClickable: true,
+          };
+        }
+
+        //second click
+      } else {
+        // only player's ghosts having opposite color of first clicked ghost are clickable
+        if (
+          crtGhost &&
+          crtGhost.ofPlayer &&
+          crtGhost.isWhite !==
+            boardState.mainBoard[firstClickedSquare.x][firstClickedSquare.y]
+              .ghost.isWhite
+        ) {
+          return {
+            handleClick: () => handleSecondClick(cood),
+            isClickable: true,
+          };
+        } else if (cood.equals(firstClickedSquare)) {
+          return {
+            handleClick: resetFirstClick,
+            isClickable: false,
+          };
+        }
       }
+
+      // during buttle
     } else if (!isOpponentInPreparation && isPlayerTurn) {
       // first click
       if (!firstClickedSquare) {
         // only player's ghosts are clickable
-        if (crtSquare.ghost && crtSquare.ghost.ofPlayer) {
-          return () => handleFirstClick(cood);
+        if (crtGhost && crtGhost.ofPlayer) {
+          return {
+            handleClick: () => handleFirstClick(cood),
+            isClickable: true,
+          };
         }
+
         // second click
       } else {
-        // only squares adjacent to firstClickedSquare are clickable
-        if (firstClickedSquare.isAdjacent(cood)) {
-          return () => {
-            handleSecondClick(cood);
-            turnEnd();
+        // only squares adjacent to firstClickedSquare and without players ghost are clickable
+        if (
+          firstClickedSquare.isAdjacent(cood) &&
+          !(crtGhost && crtGhost.ofPlayer)
+        ) {
+          return {
+            handleClick: () => {
+              handleSecondClick(cood);
+              turnEnd();
+            },
+            isClickable: true,
           };
+        } else if (cood.equals(firstClickedSquare)) {
+          return { handleClick: resetFirstClick, isClickable: false };
         }
       }
     }
+    return { handleClick: undefined, isClickable: false };
   };
 
   const renderMainBoardRow = (i: number) => {
@@ -99,13 +144,15 @@ const Board: React.FC = () => {
 
     for (let j = 0; j < BOARD_SIZE; j++) {
       const squareCood = new Cood(i, j);
+      const { handleClick, isClickable } = takeHandleClick(squareCood);
 
       rows.push(
         <Square
           key={BOARD_SIZE * i + j}
           board="MAIN_BOARD"
           ghost={boardState.mainBoard[i][j].ghost}
-          onClick={takeHandleClick(squareCood)}
+          onClick={handleClick}
+          isClickable={isClickable}
           isFirstClicked={squareCood.equals(firstClickedSquare)}
           isGoal={goals.some((cood) => cood.equals(squareCood))}
         />

@@ -6,39 +6,50 @@ import classNames from "classnames";
 
 type BoardType = "MAIN_BOARD" | "PLAYER_SIDE_BOARD" | "OPPONENT_SIDE_BOARD";
 
-interface SquarePropsInterface {
+type TSquareProps = {
   ghost: Ghost;
   board: BoardType;
   onClick?: () => void;
   isFirstClicked?: boolean;
+  isClickable?: boolean;
   isGoal?: boolean;
-}
+};
 
-const whiteGhost = (reversed: boolean) => (
+const whiteGhost = (reversed: boolean, isFirstClicked: boolean) => (
   <img
-    src="/images/white_ghost.svg"
+    src="/images/white_ghost.png"
     alt="White Ghost"
-    className={classNames(styles.ghost, { [styles.reversed]: reversed })}
+    className={classNames(styles.ghost, {
+      [styles.reversed]: reversed,
+      [styles.firstClicked]: isFirstClicked,
+    })}
   />
 );
 
-const blackGhost = (reversed: boolean) => (
+const blackGhost = (reversed: boolean, isFirstClicked: boolean) => (
   <img
-    src="/images/black_ghost.svg"
+    src="/images/black_ghost.png"
     alt="Black Ghost"
-    className={classNames(styles.ghost, { [styles.reversed]: reversed })}
+    className={classNames(styles.ghost, {
+      [styles.reversed]: reversed,
+      [styles.firstClicked]: isFirstClicked,
+    })}
   />
 );
 
 const hiddenGhost = (
   <img
-    src="/images/hidden_ghost.svg"
+    src="/images/hidden_ghost.png"
     alt="Hidden Ghost"
     className={styles.ghost}
   />
 );
 
-const loadGhostImage = (ghost: Ghost, board: BoardType) => {
+const loadGhostImage = (
+  ghost: Ghost,
+  board: BoardType,
+  isFirstClicked: boolean
+) => {
   if (!ghost) {
     return;
   }
@@ -46,24 +57,29 @@ const loadGhostImage = (ghost: Ghost, board: BoardType) => {
     case "MAIN_BOARD":
       return ghost.ofPlayer
         ? ghost.isWhite
-          ? whiteGhost(false)
-          : blackGhost(false)
+          ? whiteGhost(false, isFirstClicked)
+          : blackGhost(false, isFirstClicked)
         : hiddenGhost;
     case "PLAYER_SIDE_BOARD":
-      return ghost.isWhite ? whiteGhost(false) : blackGhost(false);
+      return ghost.isWhite
+        ? whiteGhost(false, false)
+        : blackGhost(false, false);
     case "OPPONENT_SIDE_BOARD":
-      return ghost.isWhite ? whiteGhost(true) : blackGhost(true);
+      return ghost.isWhite ? whiteGhost(true, false) : blackGhost(true, false);
   }
 };
 
-export default function Square(props: SquarePropsInterface) {
-  const ghostImage = loadGhostImage(props.ghost, props.board);
+const Square: React.FC<TSquareProps> = (props) => {
+  const ghostImage = loadGhostImage(
+    props.ghost,
+    props.board,
+    props.isFirstClicked
+  );
 
   return (
     <button
       className={classNames(styles.square, {
-        [styles.firstClicked]: props.isFirstClicked,
-        [styles.clickable]: !props.isFirstClicked && props.onClick,
+        [styles.clickable]: props.isClickable,
         [styles.goal]: props.isGoal,
       })}
       onClick={props.onClick}
@@ -71,4 +87,6 @@ export default function Square(props: SquarePropsInterface) {
       {ghostImage}
     </button>
   );
-}
+};
+
+export default Square;
