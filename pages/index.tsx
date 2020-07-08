@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { useSetPlayer } from "../contexts/playerContext";
 
-export default function Home() {
+const Home: React.FC = () => {
   const [name, setName] = useState("");
   const { setPlayerName } = useSetPlayer();
 
@@ -66,4 +66,6 @@ export default function Home() {
       `}</style>
     </div>
   );
-}
+};
+
+export default Home;

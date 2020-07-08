@@ -13,7 +13,7 @@ const PlayerSetContext = createContext({
   setOpponentName: undefined,
 });
 
-export const PlayerProvider = ({ children }) => {
+export const PlayerProvider: React.FC = ({ children }): JSX.Element => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [id, setId] = useState("");
   const [playerName, setPlayerName] = useState("");

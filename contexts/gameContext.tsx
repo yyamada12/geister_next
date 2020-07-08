@@ -10,7 +10,7 @@ const defaultState = {
 const GameStateContext = createContext(defaultState);
 const GameSetContext = createContext(undefined);
 
-export const GameProvider = ({ children }) => {
+export const GameProvider: React.FC = ({ children }): JSX.Element => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [isPlayerInPreparation, setIsPlayerInPreparation] = useState(true);
   const [isOpponentInPreparation, setIsOpponentInPreparation] = useState(true);

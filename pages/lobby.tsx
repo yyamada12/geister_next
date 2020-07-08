@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePlayer } from "../contexts/playerContext";
 import { useSocketAction } from "../contexts/socketContext";
 
-export default function Lobby() {
+const Lobby: React.FC = () => {
   const { opponentName } = usePlayer();
   const { enter } = useSocketAction();
   useEffect(() => enter(), []);
@@ -22,4 +22,6 @@ export default function Lobby() {
       )}
     </div>
   );
-}
+};
+
+export default Lobby;

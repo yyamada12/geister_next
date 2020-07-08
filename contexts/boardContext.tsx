@@ -153,7 +153,7 @@ const swap = (from: TCood, fromBoard: TBoard, to: TCood, toBoard: TBoard) => {
   ];
 };
 
-export const BoardProvider = ({ children }) => {
+export const BoardProvider: React.FC = ({ children }): JSX.Element => {
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
   const [state, dispatch] = useReducer(reducer, defaultState);
