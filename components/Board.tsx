@@ -52,7 +52,6 @@ const Board: React.FC = () => {
 
   const handleSecondClick = (sc: Cood) => {
     const fc = firstClickedSquare;
-
     emitMove(fc, sc);
     boardDispatch({
       type: ActionType.PLAYER_MOVE,

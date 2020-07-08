@@ -56,7 +56,6 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
   };
 
   const emitMove = (from: Cood, to: Cood) => {
-    console.log(from, to);
     socket.emit("move", from, to, id);
   };
 
@@ -66,7 +65,6 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
 
   const emitTurnEnd = () => {
     socket.emit("playerTurnEnd", id);
-    console.log("player turn end");
   };
 
   const judgeWinnerAtOpponentAction = () => {

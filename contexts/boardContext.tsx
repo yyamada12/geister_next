@@ -72,8 +72,8 @@ const reducer: React.Reducer<TState, TAction> = (state, action) => {
     case ActionType.PLAYER_MOVE:
       const { mainBoard, playerSideBoard, playerSideGhosts } = handlePlayerMove(
         state,
-        action.payload.to,
-        action.payload.from
+        action.payload.from,
+        action.payload.to
       );
       return {
         ...state,
@@ -84,8 +84,8 @@ const reducer: React.Reducer<TState, TAction> = (state, action) => {
     case ActionType.OPPONENT_MOVE:
       const opponentState = handleOpponentMove(
         state,
-        action.payload.to,
-        action.payload.from
+        action.payload.from,
+        action.payload.to
       );
       return {
         ...state,
