@@ -1,17 +1,25 @@
 import { useState, useEffect, useContext, createContext } from "react";
 
-const defaultState = {
+type TState = {
+  id: string;
+  playerName: string;
+  opponentName: string;
+};
+
+type TSetState = {
+  setId: Function;
+  setPlayerName: Function;
+  setOpponentName: Function;
+};
+
+const defaultState: TState = {
   id: "",
   playerName: "",
   opponentName: "",
 };
 
-const PlayerStateContext = createContext(defaultState);
-const PlayerSetContext = createContext({
-  setId: undefined,
-  setPlayerName: undefined,
-  setOpponentName: undefined,
-});
+const PlayerStateContext = createContext<TState>(defaultState);
+const PlayerSetContext = createContext<TSetState | undefined>(undefined);
 
 export const PlayerProvider: React.FC = ({ children }): JSX.Element => {
   const [isInitialized, setIsInitialized] = useState(false);
@@ -29,7 +37,7 @@ export const PlayerProvider: React.FC = ({ children }): JSX.Element => {
   }, [id, playerName, opponentName]);
 
   useEffect(() => {
-    const initialState =
+    const initialState: TState =
       JSON.parse(sessionStorage.getItem("player")) || defaultState;
     setId(initialState.id);
     setPlayerName(initialState.playerName);

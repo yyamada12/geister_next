@@ -13,7 +13,7 @@ const Game: React.FC = () => {
   const { playerPrepareDone } = useSetGame();
   const { emitPrepareDone } = useSocketAction();
 
-  let status;
+  let status: string;
   if (isPlayerInPreparation) {
     status = "おばけの配置を決定してください";
   } else if (isOpponentInPreparation) {

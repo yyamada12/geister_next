@@ -1,21 +1,39 @@
 import { useState, useEffect, useContext, createContext } from "react";
 
-const defaultState = {
+type TState = {
+  isPlayerInPreparation: boolean;
+  isOpponentInPreparation: boolean;
+  isPlayerTurn: boolean | undefined;
+  isPlayerWin: boolean | undefined;
+};
+
+type TSetState = {
+  playerPrepareDone: Function;
+  opponentPrepareDone: Function;
+  setIsPlayerTurn: Function;
+  setIsPlayerWin: Function;
+};
+
+const defaultState: TState = {
   isPlayerInPreparation: true,
   isOpponentInPreparation: true,
   isPlayerTurn: undefined,
   isPlayerWin: undefined,
 };
 
-const GameStateContext = createContext(defaultState);
-const GameSetContext = createContext(undefined);
+const GameStateContext = createContext<TState>(defaultState);
+const GameSetContext = createContext<TSetState | undefined>(undefined);
 
 export const GameProvider: React.FC = ({ children }): JSX.Element => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [isPlayerInPreparation, setIsPlayerInPreparation] = useState(true);
   const [isOpponentInPreparation, setIsOpponentInPreparation] = useState(true);
-  const [isPlayerTurn, setIsPlayerTurn] = useState(undefined);
-  const [isPlayerWin, setIsPlayerWin] = useState(undefined);
+  const [isPlayerTurn, setIsPlayerTurn] = useState<boolean | undefined>(
+    undefined
+  );
+  const [isPlayerWin, setIsPlayerWin] = useState<boolean | undefined>(
+    undefined
+  );
 
   const playerPrepareDone = () => setIsPlayerInPreparation(false);
   const opponentPrepareDone = () => setIsOpponentInPreparation(false);
@@ -39,7 +57,7 @@ export const GameProvider: React.FC = ({ children }): JSX.Element => {
   ]);
 
   useEffect(() => {
-    const initialState =
+    const initialState: TState =
       JSON.parse(sessionStorage.getItem("game")) || defaultState;
     setIsPlayerInPreparation(initialState.isPlayerInPreparation);
     setIsOpponentInPreparation(initialState.isOpponentInPreparation);
