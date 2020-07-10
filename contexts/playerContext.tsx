@@ -18,8 +18,14 @@ const defaultState: TState = {
   opponentName: "",
 };
 
+const defaultSetState: TSetState = {
+  setId: () => {},
+  setPlayerName: () => {},
+  setOpponentName: () => {},
+};
+
 const PlayerStateContext = createContext<TState>(defaultState);
-const PlayerSetContext = createContext<TSetState | undefined>(undefined);
+const PlayerSetContext = createContext<TSetState>(defaultSetState);
 
 export const PlayerProvider: React.FC = ({ children }): JSX.Element => {
   const [isInitialized, setIsInitialized] = useState(false);
