@@ -15,13 +15,13 @@ server.listen(port, function () {
 
 const io = socketio.listen(server);
 
-let waitingPlayerId: string;
+let waitingPlayerId: string | undefined;
 const lock = new AsyncLock();
 let players: {
   [id: string]: { name?: string; socketid: string; opponent?: string };
 } = {};
 
-const getOpponentSocketid = (id) => {
+const getOpponentSocketid = (id: string) => {
   return players[players[id].opponent].socketid;
 };
 
