@@ -4,12 +4,14 @@ import Link from "next/link";
 import { usePlayer } from "../contexts/playerContext";
 import { useSocketAction } from "../contexts/socketContext";
 
+import styles from "../css_modules/lobby.module.css";
+
 const Lobby: React.FC = () => {
   const { opponentName } = usePlayer();
   const { enter } = useSocketAction();
   useEffect(() => enter(), []);
   return (
-    <div>
+    <div className={styles.main}>
       <p>
         {opponentName
           ? opponentName + "とマッチしました！"

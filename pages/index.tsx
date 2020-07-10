@@ -25,11 +25,12 @@ const Home: React.FC = () => {
         <h1>Geister</h1>
 
         <TextField
-          label="name"
+          label="Player name"
           name="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
         ></TextField>
+        <br />
         <Link href="/lobby">
           <Button
             variant="contained"
