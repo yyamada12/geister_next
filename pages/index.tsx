@@ -1,7 +1,10 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 
 import Head from "next/head";
 import Link from "next/link";
+
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
 
 import { useSetPlayer } from "../contexts/playerContext";
 
@@ -18,24 +21,24 @@ const Home: React.FC = () => {
 
       <main>
         <h1 className="title">Geister</h1>
-        <div>
-          name:
-          <input
-            type="text"
-            name="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          ></input>
-        </div>
+
+        <TextField
+          label="name"
+          name="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        ></TextField>
         <Link href="/lobby">
-          <button
+          <Button
+            variant="contained"
+            color="primary"
             disabled={!name}
             onClick={() => {
               setPlayerName(name);
             }}
           >
             start
-          </button>
+          </Button>
         </Link>
       </main>
 
