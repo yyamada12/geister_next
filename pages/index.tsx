@@ -3,8 +3,7 @@ import React, { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
+import { Button, TextField } from "@material-ui/core";
 
 import styles from "../css_modules/home.module.css";
 

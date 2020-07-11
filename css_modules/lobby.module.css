@@ -1,5 +1,11 @@
 .main {
   padding: 5rem 0;
-  display: flex;
+  margin: 0 auto;
+  width: 30rem;
   justify-content: center;
+  text-align: center;
+}
+
+.main p {
+  font-size: 1.4rem;
 }

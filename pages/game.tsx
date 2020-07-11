@@ -2,6 +2,7 @@ import React from "react";
 import Board from "../components/board";
 import { useGame, useSetGame } from "../contexts/gameContext";
 import { useSocketAction } from "../contexts/socketContext";
+import Header from "../components/header";
 
 const Game: React.FC = () => {
   const {
@@ -26,6 +27,7 @@ const Game: React.FC = () => {
 
   return (
     <div>
+      <Header />
       <p>{status}</p>
       <Board />
       <br />
