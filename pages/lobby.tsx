@@ -13,22 +13,24 @@ const Lobby: React.FC = () => {
   const { enter } = useSocketAction();
   useEffect(() => enter(), []);
   return (
-    <div className={styles.main}>
+    <React.Fragment>
       <Header />
-      <p>
-        {opponentName
-          ? opponentName + "とマッチしました！"
-          : "対戦相手を探しています ..."}
-      </p>
-      <br />
-      {opponentName && (
-        <Link href="/game">
-          <Button variant="contained" color="primary">
-            ゲーム開始
-          </Button>
-        </Link>
-      )}
-    </div>
+      <div className={styles.main}>
+        <p>
+          {opponentName
+            ? opponentName + "とマッチしました！"
+            : "対戦相手を探しています ..."}
+        </p>
+        <br />
+        {opponentName && (
+          <Link href="/game">
+            <Button variant="contained" color="primary">
+              ゲーム開始
+            </Button>
+          </Link>
+        )}
+      </div>
+    </React.Fragment>
   );
 };
 

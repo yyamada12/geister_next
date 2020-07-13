@@ -4,6 +4,8 @@ import { useGame, useSetGame } from "../contexts/gameContext";
 import { useSocketAction } from "../contexts/socketContext";
 import Header from "../components/header";
 
+import styles from "../css_modules/game.module.css";
+
 const Game: React.FC = () => {
   const {
     isPlayerInPreparation,
@@ -26,22 +28,24 @@ const Game: React.FC = () => {
   }
 
   return (
-    <div>
+    <React.Fragment>
       <Header />
-      <p>{status}</p>
-      <Board />
-      <br />
-      {isPlayerInPreparation && (
-        <button
-          onClick={() => {
-            playerPrepareDone();
-            emitPrepareDone();
-          }}
-        >
-          準備完了
-        </button>
-      )}
-    </div>
+      <div className={styles.main}>
+        <p>{status}</p>
+        <Board />
+        <br />
+        {isPlayerInPreparation && (
+          <button
+            onClick={() => {
+              playerPrepareDone();
+              emitPrepareDone();
+            }}
+          >
+            準備完了
+          </button>
+        )}
+      </div>
+    </React.Fragment>
   );
 };
 

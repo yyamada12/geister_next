@@ -8,14 +8,14 @@
 }
 
 .opponentSideBoard {
-  margin: 0 10px;
+  margin: 0 1rem;
   display: flex;
   flex-direction: row;
 }
 
 .playerSideBoard {
-  margin: 0 10px;
+  margin: 0 1rem;
   display: flex;
   flex-direction: row;
-  margin-top: 132px;
+  margin-top: 8.25rem;
 }

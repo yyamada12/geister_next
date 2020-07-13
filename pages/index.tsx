@@ -14,7 +14,7 @@ const Home: React.FC = () => {
   const { setPlayerName } = useSetPlayer();
 
   return (
-    <div>
+    <React.Fragment>
       <Head>
         <title>Create Next App</title>
         <link rel="icon" href="/favicon.ico" />
@@ -43,7 +43,7 @@ const Home: React.FC = () => {
           </Button>
         </Link>
       </div>
-    </div>
+    </React.Fragment>
   );
 };
 

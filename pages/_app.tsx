@@ -4,6 +4,8 @@ import { BoardProvider } from "../contexts/boardContext";
 import { GameProvider } from "../contexts/gameContext";
 import { SocketProvider } from "../contexts/socketContext";
 
+import "../public/style.css";
+
 class MyApp extends App {
   render() {
     const { Component, pageProps } = this.props;
