@@ -21,6 +21,7 @@ const Board: React.FC = () => {
     isPlayerInPreparation,
     isOpponentInPreparation,
     isPlayerTurn,
+    isPlayerWin,
   } = useGame();
   const { setIsPlayerTurn, setIsPlayerWin } = useSetGame();
 
@@ -69,6 +70,10 @@ const Board: React.FC = () => {
 
   const takeHandleClick = (cood: Cood) => {
     const crtGhost = boardState.mainBoard[cood.x][cood.y].ghost;
+
+    if (isPlayerWin !== undefined) {
+      return { handleClick: undefined, isClickable: false };
+    }
 
     // in preparation
     if (isPlayerInPreparation) {
