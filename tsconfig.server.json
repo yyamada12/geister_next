@@ -3,6 +3,8 @@
   "compilerOptions": {
     "noEmit": false,
     "module": "commonjs",
-    "isolatedModules": false
-  }
+    "isolatedModules": false,
+    "outDir": "dist"
+  },
+  "include": ["server"]
 }

@@ -4,16 +4,27 @@ import http from "http";
 import socketio from "socket.io";
 import AsyncLock from "async-lock";
 
+import next from "next";
+
 const app = express();
 const server = http.createServer(app);
+const io = socketio.listen(server);
+
+const dev = process.env.NODE_ENV !== "production";
+const nextApp = next({ dev });
+const nextHandler = nextApp.getRequestHandler();
 
 const port = 8080;
 
-server.listen(port, function () {
-  console.log(`server is running on http://localhost:${port}`);
-});
+nextApp.prepare().then(() => {
+  app.get("*", (req, res) => {
+    return nextHandler(req, res);
+  });
 
-const io = socketio.listen(server);
+  server.listen(port, function () {
+    console.log(`server is running on http://localhost:${port}`);
+  });
+});
 
 let waitingPlayerId: string | undefined;
 const lock = new AsyncLock();
