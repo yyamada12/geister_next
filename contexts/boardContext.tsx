@@ -10,7 +10,7 @@ import {
 import { GHOST_NUM } from "../consts";
 import Cood from "../classes//cood";
 
-type TGhost = { ofPlayer: boolean; isWhite: boolean };
+export type TGhost = { ofPlayer: boolean; isWhite: boolean };
 type TSquare = { ghost: undefined | TGhost };
 type TBoard = Array<Array<TSquare>>;
 type TCood = { x: number; y: number };

@@ -1,13 +1,13 @@
 import React from "react";
 import styles from "../css_modules/square.module.css";
-import Ghost from "../classes//ghost";
 
 import classNames from "classnames";
+import { TGhost } from "../contexts/boardContext";
 
 type BoardType = "MAIN_BOARD" | "PLAYER_SIDE_BOARD" | "OPPONENT_SIDE_BOARD";
 
 type TSquareProps = {
-  ghost: Ghost;
+  ghost: TGhost;
   board: BoardType;
   onClick?: () => void;
   isFirstClicked?: boolean;
@@ -46,7 +46,7 @@ const hiddenGhost = (
 );
 
 const loadGhostImage = (
-  ghost: Ghost,
+  ghost: TGhost,
   board: BoardType,
   isFirstClicked: boolean
 ) => {
