@@ -21,7 +21,7 @@ const Game: React.FC = () => {
     status = "おばけの配置を決定してください";
   } else if (isOpponentInPreparation) {
     status = "対戦相手が準備中です…";
-  } else if (typeof isPlayerWin === "undefined") {
+  } else if (isPlayerWin === undefined) {
     status = isPlayerTurn ? "あなたのターンです" : "相手のターンです";
   } else {
     status = isPlayerWin ? "あなたの勝ちです！！！" : "あなたの負けです‥";
