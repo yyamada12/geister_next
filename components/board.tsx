@@ -159,6 +159,7 @@ const Board: React.FC = () => {
           isClickable={isClickable}
           isFirstClicked={squareCood.equals(firstClickedSquare)}
           isGoal={goals.some((cood) => cood.equals(squareCood))}
+          isButtleEnd={isPlayerWin !== undefined}
         />
       );
     }

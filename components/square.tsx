@@ -13,6 +13,7 @@ type TSquareProps = {
   isFirstClicked?: boolean;
   isClickable?: boolean;
   isGoal?: boolean;
+  isButtleEnd?: boolean;
 };
 
 const whiteGhost = (reversed: boolean, isFirstClicked: boolean) => (
@@ -48,24 +49,33 @@ const hiddenGhost = (
 const loadGhostImage = (
   ghost: TGhost,
   board: BoardType,
-  isFirstClicked: boolean
+  isFirstClicked: boolean,
+  isButtleEnd: boolean
 ) => {
   if (!ghost) {
     return;
   }
   switch (board) {
     case "MAIN_BOARD":
-      return ghost.ofPlayer
-        ? ghost.isWhite
-          ? whiteGhost(false, isFirstClicked)
-          : blackGhost(false, isFirstClicked)
-        : hiddenGhost;
+      if (isButtleEnd) {
+        return ghost.isWhite
+          ? whiteGhost(!ghost.ofPlayer, isFirstClicked, isFactorGhost)
+          : blackGhost(!ghost.ofPlayer, isFirstClicked, isFactorGhost);
+      } else {
+        return ghost.ofPlayer
+          ? ghost.isWhite
+            ? whiteGhost(false, isFirstClicked, isFactorGhost)
+            : blackGhost(false, isFirstClicked, isFactorGhost)
+          : hiddenGhost;
+      }
     case "PLAYER_SIDE_BOARD":
       return ghost.isWhite
-        ? whiteGhost(false, false)
-        : blackGhost(false, false);
+        ? whiteGhost(false, false, isFactorGhost)
+        : blackGhost(false, false, isFactorGhost);
     case "OPPONENT_SIDE_BOARD":
-      return ghost.isWhite ? whiteGhost(true, false) : blackGhost(true, false);
+      return ghost.isWhite
+        ? whiteGhost(true, false, isFactorGhost)
+        : blackGhost(true, false, isFactorGhost);
   }
 };
 
@@ -73,7 +83,8 @@ const Square: React.FC<TSquareProps> = (props) => {
   const ghostImage = loadGhostImage(
     props.ghost,
     props.board,
-    props.isFirstClicked
+    props.isFirstClicked,
+    props.isButtleEnd
   );
 
   return (
