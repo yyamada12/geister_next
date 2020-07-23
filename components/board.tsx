@@ -22,8 +22,9 @@ const Board: React.FC = () => {
     isOpponentInPreparation,
     isPlayerTurn,
     isPlayerWin,
+    factorGhost,
   } = useGame();
-  const { setIsPlayerTurn, setIsPlayerWin } = useSetGame();
+  const { setIsPlayerTurn, setIsPlayerWin, setFactorGhost } = useSetGame();
 
   const { emitMove, emitTurnEnd } = useSocketAction();
 
@@ -65,7 +66,7 @@ const Board: React.FC = () => {
   const turnEnd = () => {
     emitTurnEnd();
     setIsPlayerTurn(false);
-    judgeWinnerAtPlayerAction(boardState, setIsPlayerWin);
+    judgeWinnerAtPlayerAction(boardState, setIsPlayerWin, setFactorGhost);
   };
 
   const takeHandleClick = (cood: Cood) => {
@@ -159,6 +160,7 @@ const Board: React.FC = () => {
           isClickable={isClickable}
           isFirstClicked={squareCood.equals(firstClickedSquare)}
           isGoal={goals.some((cood) => cood.equals(squareCood))}
+          isFactorGhost={squareCood.equals(factorGhost)}
           isButtleEnd={isPlayerWin !== undefined}
         />
       );
@@ -197,6 +199,7 @@ const Board: React.FC = () => {
           key={GHOST_NUM * i + j}
           board={ofPlayer ? "PLAYER_SIDE_BOARD" : "OPPONENT_SIDE_BOARD"}
           ghost={ghost}
+          isFactorGhost={false}
         />
       );
     }
@@ -230,25 +233,36 @@ const Board: React.FC = () => {
   );
 };
 
-const judgeWinnerAtPlayerAction = (boardState, setIsPlayerWin) => {
+const judgeWinnerAtPlayerAction = (
+  boardState,
+  setIsPlayerWin,
+  setFactorGhost
+) => {
   if (boardState.playerSideGhosts[0] == GHOST_NUM) {
     // take 4 white ghosts
     setIsPlayerWin(true);
   } else if (boardState.playerSideGhosts[1] == GHOST_NUM) {
     // take 4 black ghosts
     setIsPlayerWin(false);
-  } else if (isOpponentGhostAtGoal(boardState.mainBoard)) {
-    // opponent white ghost arrived at the goal
+  } else if (isOpponentGhostAtLeftGoal(boardState.mainBoard)) {
+    // opponent white ghost arrived at the left side goal
     setIsPlayerWin(false);
+    setFactorGhost(new Cood(5, 0));
+  } else if (isOpponentGhostAtRightGoal(boardState.mainBoard)) {
+    // opponent white ghost arrived at the right side goal
+    setIsPlayerWin(false);
+    setFactorGhost(new Cood(5, 5));
   }
 };
 
-const isOpponentGhostAtGoal = (mainBoard) => {
-  const g1 = mainBoard[5][0].ghost;
-  const g2 = mainBoard[5][5].ghost;
-  return (
-    (g1 && g1.isWhite && !g1.ofPlayer) || (g2 && g2.isWhite && !g2.ofPlayer)
-  );
+const isOpponentGhostAtLeftGoal = (mainBoard) => {
+  const goal = mainBoard[5][0].ghost;
+  return goal && goal.isWhite && !goal.ofPlayer;
+};
+
+const isOpponentGhostAtRightGoal = (mainBoard) => {
+  const goal = mainBoard[5][5].ghost;
+  return goal && goal.isWhite && !goal.ofPlayer;
 };
 
 export default Board;

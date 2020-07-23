@@ -13,27 +13,38 @@ type TSquareProps = {
   isFirstClicked?: boolean;
   isClickable?: boolean;
   isGoal?: boolean;
+  isFactorGhost: boolean;
   isButtleEnd?: boolean;
 };
 
-const whiteGhost = (reversed: boolean, isFirstClicked: boolean) => (
+const whiteGhost = (
+  reversed: boolean,
+  isFirstClicked: boolean,
+  isFactorGhost: boolean
+) => (
   <img
     src="/images/white_ghost.png"
     alt="White Ghost"
     className={classNames(styles.ghost, {
       [styles.reversed]: reversed,
       [styles.firstClicked]: isFirstClicked,
+      [styles.factorGhost]: isFactorGhost,
     })}
   />
 );
 
-const blackGhost = (reversed: boolean, isFirstClicked: boolean) => (
+const blackGhost = (
+  reversed: boolean,
+  isFirstClicked: boolean,
+  isFactorGhost: boolean
+) => (
   <img
     src="/images/black_ghost.png"
     alt="Black Ghost"
     className={classNames(styles.ghost, {
       [styles.reversed]: reversed,
       [styles.firstClicked]: isFirstClicked,
+      [styles.factorGhost]: isFactorGhost,
     })}
   />
 );
@@ -50,6 +61,7 @@ const loadGhostImage = (
   ghost: TGhost,
   board: BoardType,
   isFirstClicked: boolean,
+  isFactorGhost: boolean,
   isButtleEnd: boolean
 ) => {
   if (!ghost) {
@@ -84,6 +96,7 @@ const Square: React.FC<TSquareProps> = (props) => {
     props.ghost,
     props.board,
     props.isFirstClicked,
+    props.isFactorGhost,
     props.isButtleEnd
   );
 

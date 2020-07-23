@@ -1,10 +1,12 @@
 import { useState, useEffect, useContext, createContext } from "react";
+import Cood from "../classes/cood";
 
 type TState = {
   isPlayerInPreparation: boolean;
   isOpponentInPreparation: boolean;
   isPlayerTurn: boolean | undefined;
   isPlayerWin: boolean | undefined;
+  factorGhost: Cood;
 };
 
 type TSetState = {
@@ -12,6 +14,7 @@ type TSetState = {
   opponentPrepareDone: Function;
   setIsPlayerTurn: Function;
   setIsPlayerWin: Function;
+  setFactorGhost: Function;
 };
 
 const defaultState: TState = {
@@ -19,6 +22,7 @@ const defaultState: TState = {
   isOpponentInPreparation: true,
   isPlayerTurn: undefined,
   isPlayerWin: undefined,
+  factorGhost: undefined,
 };
 
 const GameStateContext = createContext<TState>(defaultState);
@@ -34,6 +38,7 @@ export const GameProvider: React.FC = ({ children }): JSX.Element => {
   const [isPlayerWin, setIsPlayerWin] = useState<boolean | undefined>(
     undefined
   );
+  const [factorGhost, setFactorGhost] = useState<Cood>(undefined);
 
   const playerPrepareDone = () => setIsPlayerInPreparation(false);
   const opponentPrepareDone = () => setIsOpponentInPreparation(false);
@@ -46,6 +51,7 @@ export const GameProvider: React.FC = ({ children }): JSX.Element => {
           isOpponentInPreparation,
           isPlayerTurn,
           isPlayerWin,
+          factorGhost,
         })
       );
     }
@@ -54,6 +60,7 @@ export const GameProvider: React.FC = ({ children }): JSX.Element => {
     isOpponentInPreparation,
     isPlayerTurn,
     isPlayerWin,
+    factorGhost,
   ]);
 
   useEffect(() => {
@@ -63,6 +70,7 @@ export const GameProvider: React.FC = ({ children }): JSX.Element => {
     setIsOpponentInPreparation(initialState.isOpponentInPreparation);
     setIsPlayerTurn(initialState.isPlayerTurn);
     setIsPlayerWin(initialState.isPlayerWin);
+    setFactorGhost(initialState.factorGhost);
 
     setIsInitialized(true);
   }, []);
@@ -74,6 +82,7 @@ export const GameProvider: React.FC = ({ children }): JSX.Element => {
         opponentPrepareDone,
         setIsPlayerTurn,
         setIsPlayerWin,
+        setFactorGhost,
       }}
     >
       <GameStateContext.Provider
@@ -82,6 +91,7 @@ export const GameProvider: React.FC = ({ children }): JSX.Element => {
           isOpponentInPreparation,
           isPlayerTurn,
           isPlayerWin,
+          factorGhost,
         }}
       >
         {children}

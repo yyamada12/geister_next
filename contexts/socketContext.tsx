@@ -13,7 +13,12 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
   const { setId, setOpponentName } = useSetPlayer();
   const { id, playerName } = usePlayer();
 
-  const { opponentPrepareDone, setIsPlayerTurn, setIsPlayerWin } = useSetGame();
+  const {
+    opponentPrepareDone,
+    setIsPlayerTurn,
+    setIsPlayerWin,
+    setFactorGhost,
+  } = useSetGame();
 
   const boardState = useBoard();
   const boardDispatch = useDispatchBoard();
@@ -74,18 +79,25 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
     } else if (boardState.opponentSideGhosts[1] == 0) {
       // take 4 white ghosts
       setIsPlayerWin(false);
-    } else if (isPlayerGhostAtGoal()) {
-      // player's white ghost arrived at the goal
+    } else if (isPlayerGhostAtLeftGoal()) {
+      // player's white ghost arrived at the left side goal
       setIsPlayerWin(true);
+      setFactorGhost(new Cood(0, 0));
+    } else if (isPlayerGhostAtRightGoal()) {
+      // player's white ghost arrived at the right side goal
+      setIsPlayerWin(true);
+      setFactorGhost(new Cood(0, 5));
     }
   };
 
-  const isPlayerGhostAtGoal = () => {
-    const g1 = boardState.mainBoard[0][0].ghost;
-    const g2 = boardState.mainBoard[0][5].ghost;
-    return (
-      (g1 && g1.isWhite && g1.ofPlayer) || (g2 && g2.isWhite && g2.ofPlayer)
-    );
+  const isPlayerGhostAtLeftGoal = () => {
+    const goal = boardState.mainBoard[0][0].ghost;
+    return goal && goal.isWhite && goal.ofPlayer;
+  };
+
+  const isPlayerGhostAtRightGoal = () => {
+    const goal = boardState.mainBoard[0][5].ghost;
+    return goal && goal.isWhite && goal.ofPlayer;
   };
 
   return (
