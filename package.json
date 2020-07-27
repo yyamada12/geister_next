@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "ts-node --project tsconfig.server.json server/index.ts",
-    "build: next": "next build",
-    "build:  server": "tsc --project tsconfig.server.json",
+    "build:next": "next build",
+    "build:server": "tsc --project tsconfig.server.json",
     "start": "NODE_ENV=production node dist/index.js"
   },
   "dependencies": {
