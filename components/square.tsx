@@ -28,7 +28,8 @@ const whiteGhost = (
     className={classNames(styles.ghost, {
       [styles.reversed]: reversed,
       [styles.firstClicked]: isFirstClicked,
-      [styles.factorGhost]: isFactorGhost,
+      [styles.factorGhost]: !reversed && isFactorGhost,
+      [styles.reversedFactorGhost]: reversed && isFactorGhost,
     })}
   />
 );
@@ -44,7 +45,8 @@ const blackGhost = (
     className={classNames(styles.ghost, {
       [styles.reversed]: reversed,
       [styles.firstClicked]: isFirstClicked,
-      [styles.factorGhost]: isFactorGhost,
+      [styles.factorGhost]: !reversed && isFactorGhost,
+      [styles.reversedFactorGhost]: reversed && isFactorGhost,
     })}
   />
 );

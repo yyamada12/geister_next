@@ -76,9 +76,14 @@
 }
 
 .factorGhost {
-  animation: firstClicked 0.4s infinite;
+  animation: factorGhost 0.4s infinite;
 }
-@keyframes firstClicked {
+
+.reversedFactorGhost {
+  animation: reversedFactorGhost 0.4s infinite;
+}
+
+@keyframes factorGhost {
   0% {
     transform: translate(1px, 1px);
   }
@@ -93,5 +98,23 @@
   }
   100% {
     transform: translate(1px, 1px);
+  }
+}
+
+@keyframes reversedFactorGhost {
+  0% {
+    transform: translate(1px, 1px) rotate(180deg);
+  }
+  25% {
+    transform: translate(1px, -1px) rotate(180deg);
+  }
+  50% {
+    transform: translate(-1px, -1px) rotate(180deg);
+  }
+  75% {
+    transform: translate(-1px, 1px) rotate(180deg);
+  }
+  100% {
+    transform: translate(1px, 1px) rotate(180deg);
   }
 }
