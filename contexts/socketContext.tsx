@@ -24,8 +24,10 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
   const boardDispatch = useDispatchBoard();
 
   useEffect(() => {
-    socket = io(":8080");
+    socket = io(process.env.NEXT_PUBLIC_SERVER_HOST + ":8080");
     socket.emit("uuid", id);
+
+    console.log(socket.io.uri);
 
     socket.on("assignId", (newId: string) => {
       setId(newId);
