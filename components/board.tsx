@@ -199,7 +199,7 @@ const Board: React.FC = () => {
           key={GHOST_NUM * i + j}
           board={ofPlayer ? "PLAYER_SIDE_BOARD" : "OPPONENT_SIDE_BOARD"}
           ghost={ghost}
-          isFactorGhost={false}
+          isFactorGhost={isFactorSideGhost(boardState, ofPlayer, i)}
         />
       );
     }
@@ -238,10 +238,10 @@ const judgeWinnerAtPlayerAction = (
   setIsPlayerWin,
   setFactorGhost
 ) => {
-  if (boardState.playerSideGhosts[0] == GHOST_NUM) {
+  if (boardState.playerSideGhosts[0] === GHOST_NUM) {
     // take 4 white ghosts
     setIsPlayerWin(true);
-  } else if (boardState.playerSideGhosts[1] == GHOST_NUM) {
+  } else if (boardState.playerSideGhosts[1] === GHOST_NUM) {
     // take 4 black ghosts
     setIsPlayerWin(false);
   } else if (isOpponentGhostAtLeftGoal(boardState.mainBoard)) {
@@ -253,6 +253,12 @@ const judgeWinnerAtPlayerAction = (
     setIsPlayerWin(false);
     setFactorGhost(new Cood(5, 5));
   }
+};
+
+const isFactorSideGhost = (boardState, ofPlayer: boolean, i: number) => {
+  return ofPlayer
+    ? boardState.playerSideGhosts[i] === GHOST_NUM
+    : boardState.opponentSideGhosts[i] === -1;
 };
 
 const isOpponentGhostAtLeftGoal = (mainBoard) => {

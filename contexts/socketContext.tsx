@@ -75,10 +75,10 @@ export const SocketProvider: React.FC = ({ children }): JSX.Element => {
   };
 
   const judgeWinnerAtOpponentAction = () => {
-    if (boardState.opponentSideGhosts[0] == 0) {
+    if (boardState.opponentSideGhosts[0] === -1) {
       // take 4 black ghosts
       setIsPlayerWin(true);
-    } else if (boardState.opponentSideGhosts[1] == 0) {
+    } else if (boardState.opponentSideGhosts[1] === -1) {
       // take 4 white ghosts
       setIsPlayerWin(false);
     } else if (isPlayerGhostAtLeftGoal()) {
